@@ -1,6 +1,9 @@
+# Autor: Piotr Sikorski
+
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Iterable
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
+    from typing import Optional, Iterable
     import numpy as np
 
 import pandas as pd
