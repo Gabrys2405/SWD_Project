@@ -76,7 +76,7 @@ class SystemWyboruHoteli():
         ]
         for nazwa in nazwy_parametrow:
             if getattr(self, nazwa) is None:
-                raise wyjatki.BrakInicjalizacjiParametru(s)
+                raise wyjatki.BrakInicjalizacjiParametru(nazwa)
         
         
         # Można utworzyć macierz z samymi kryteriami
