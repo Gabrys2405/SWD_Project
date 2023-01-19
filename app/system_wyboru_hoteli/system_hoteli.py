@@ -31,11 +31,11 @@ class SystemWyboruHoteli():
         # Dane wszystkich hoteli
         self.dane_hoteli: Optional[pd.DataFrame] = None
 
-        self.minimalne_kryteria: Optional[np.ndarray] = None
-        self.maksymalne_kryteria: Optional[np.ndarray] = None
+        self.minimalne_kryteria: Optional[pd.DataFrame] = None
+        self.maksymalne_kryteria: Optional[pd.DataFrame] = None
 
-        self.punkty_docelowe: Optional[np.ndarray] = None
-        self.punkty_status_quo: Optional[np.ndarray] = None
+        self.punkty_docelowe: Optional[pd.DataFrame] = None
+        self.punkty_status_quo: Optional[pd.DataFrame] = None
 
         self.czy_parking_musi_byc_darmowy: bool = False
 
@@ -53,6 +53,20 @@ class SystemWyboruHoteli():
         self.rankingi_metod: Optional[Dict[str, pd.DataFrame]] = None
         pass
 
+
+    def utworz_dataframey(self):
+        """Tworzy DataFrame'y na podstawie danych hoteli"""
+        if self.dane_hoteli is None:
+            raise RuntimeError("Nie załadowano danych hoteli")
+        
+        nazwy_kolumn = indeksy_na_kolumny(self.dane_hoteli, self.kolumny_kryteriow)
+
+        self.minimalne_kryteria = pd.DataFrame([(0, 0, 0, 0, 0)], columns=nazwy_kolumn)
+        self.maksymalne_kryteria = pd.DataFrame([(10, 10, 10000, 10, 10)], columns=nazwy_kolumn)
+
+        self.punkty_docelowe = pd.DataFrame([(10, 10, 0, 0, 10)], columns=nazwy_kolumn)
+        self.punkty_status_quo = pd.DataFrame([(0, 0, 10000, 10, 0)], columns=nazwy_kolumn)
+        
 
     def wykonaj_wszystkie_obliczenia(self) -> None:
         """Funkcja wykonująca wszystkie kalkulacje do rankingów.
@@ -99,21 +113,21 @@ class SystemWyboruHoteli():
         
         # Granice kryteriów
         if not sprawdzenie_danych_wejsciowych.czy_granice_kryteriow_sa_poprawne(
-            self.minimalne_kryteria, self.maksymalne_kryteria
+            self.minimalne_kryteria.values, self.maksymalne_kryteria.values
         ):
             raise wyjatki.BladDanychUzytkownika("Kryteria minimalne i maksymalne są sprzeczne")
         
         # Niesprzeczności zbiorów
         if not sprawdzenie_danych_wejsciowych.czy_punkty_w_zbiorze_wzajemnie_niesprzeczne(
-            self.punkty_docelowe
+            self.punkty_docelowe.values
         ):
             raise wyjatki.BladDanychUzytkownika("Punkty w zbiorze punktów docelowych są wzajemnie sprzeczne")
         if not sprawdzenie_danych_wejsciowych.czy_punkty_w_zbiorze_wzajemnie_niesprzeczne(
-            self.punkty_status_quo
+            self.punkty_status_quo.values
         ):
             raise wyjatki.BladDanychUzytkownika("Punkty w zbiorze punktów status-quo są wzajemnie sprzeczne")
         if not sprawdzenie_danych_wejsciowych.czy_zbiory_wzajemnie_niesprzeczne(
-            self.punkty_docelowe, self.punkty_status_quo
+            self.punkty_docelowe.values, self.punkty_status_quo.values
         ):
             raise wyjatki.BladDanychUzytkownika("Zbiory punktów docelowych i status-quo są wzajemnie sprzeczne") 
 
@@ -129,7 +143,7 @@ class SystemWyboruHoteli():
         )
 
         kryteria_hoteli = wstepne_przetwarzanie_kryteriow.filtruj_hotele__wartosci_kryteriow_minimalne_i_maksymalne(
-            kryteria_hoteli, self.minimalne_kryteria, self.maksymalne_kryteria
+            kryteria_hoteli, self.minimalne_kryteria.values, self.maksymalne_kryteria.values
         )
 
         kryteria_hoteli = wstepne_przetwarzanie_kryteriow.zamien_maksymalizacje_na_minimalizacje(
@@ -149,6 +163,6 @@ class SystemWyboruHoteli():
                 self.kryteria_hoteli
             ),
             'rsm': funkcje_rankingowe.ranking_rsm(
-                self.kryteria_hoteli, self.punkty_docelowe, self.punkty_status_quo
+                self.kryteria_hoteli, self.punkty_docelowe.values, self.punkty_status_quo.values
             )
         }
