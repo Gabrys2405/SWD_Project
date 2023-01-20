@@ -1,2 +1,5 @@
 # Pliki cache Pythona
 __pycache__
+
+# Plik testowy ipynb
+/test.ipynb
