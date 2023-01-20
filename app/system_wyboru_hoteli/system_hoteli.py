@@ -1,68 +1,13 @@
 # Autor główny: Piotr Sikorski
 from __future__ import annotations 
-from typing import Dict, Optional, List
-import copy
+from typing import Dict, Optional, List, Literal
 import numpy as np
 import pandas as pd
 import wyjatki
 import sprawdzenie_danych_wejsciowych
 import wstepne_przetwarzanie_kryteriow
 import funkcje_rankingowe
-
-# Indeksy kolumn, które zawierają dane kryterialne
-kolumny_kryteriow: List[int] = [2, 3, 4, 5, 7]
-
-def indeksy_na_kolumny(df: pd.DataFrame, indeksy: List[int]) -> pd.Index:
-    return [df.columns[i] for i in indeksy]
-
-
-class ZbiorDanych():
-    """Klasa zbierająca dane do dalszego przetwarzania."""
-
-    def __init__(self, dane_hoteli: pd.DataFrame) -> None:
-        # === Parametry === #
-
-        # Dane wszystkich hoteli
-        self.dane_hoteli = dane_hoteli
-
-        nazwy_kolumn = indeksy_na_kolumny(self.dane_hoteli, kolumny_kryteriow)
-
-        self.wybrane_kryteria = pd.DataFrame([(True, True, True, True, True)], columns=nazwy_kolumn)
-
-        self.minimalne_kryteria = pd.DataFrame([(0, 0, 0, 0, 0)], columns=nazwy_kolumn)
-        self.maksymalne_kryteria = pd.DataFrame([(10, 10, 10000, 10, 10)], columns=nazwy_kolumn)
-
-        self.punkty_docelowe = pd.DataFrame([(10, 10, 0, 0, 10)], columns=nazwy_kolumn)
-        self.punkty_status_quo = pd.DataFrame([(0, 0, 10000, 10, 0)], columns=nazwy_kolumn)
-
-        self.czy_parking_musi_byc_darmowy: bool = False
-
-        # === Cache === #
-
-        # DataFrame zawierający wyłacznie kryteria pasujących 
-        # i niezdominowanych hoteli 
-        # Można utworzyć macierz z samymi kryteriami
-        kolumny = indeksy_na_kolumny(self.dane_hoteli, kolumny_kryteriow)
-        self.kryteria_hoteli = self.dane_hoteli[kolumny]
-    
-
-    def kopia_z_wybranymi_kryteriami(self) -> ZbiorDanych:
-        """Zwraca nowy zbiór danych, ale posiadający kolumny danych tylko wybranych przez użytkownika"""
-        kolumny = []
-        for nazwa, czy_uwzgledniana in zip(self.kryteria_hoteli.columns, self.wybrane_kryteria):
-            if czy_uwzgledniana:
-                kolumny.append(nazwa)
-        
-        kopia = copy.copy(self)  # unikam niepotrzebnego tworzenia całości klasy
-        nazwy_parametrow: List[str] = [
-            "wybrane_kryteria", "minimalne_kryteria", "maksymalne_kryteria",
-            "punkty_docelowe", "punkty_status_quo"
-        ]
-        for nazwa in nazwy_parametrow:
-            df: pd.DataFrame = getattr(self, nazwa)
-            setattr(kopia, nazwa, df[kolumny])
-        
-        return kopia
+from zbior_danych import ZbiorDanych
 
 
 class SystemWyboruHoteli():
@@ -92,20 +37,9 @@ class SystemWyboruHoteli():
         self.dane = ZbiorDanych(dane_hoteli)
         
 
-    def wykonaj_wszystkie_obliczenia(self) -> None:
-        """Funkcja wykonująca wszystkie kalkulacje do rankingów.
-
-        Funkcja przetwarza wcześniej wprowadzone do niej dane, aby zapisać
-        w sobie rankingi z nich wynikające. Zgłasza wiele wyjątków, najczęściej 
-        dla niepoprawnych danych. 
-        """
-
-        self._sprawdz_poprawnosc_danych()
-        self._wykonaj_przetwarzanie_kryteriow()
-        self._wygeneruj_rankingi()
-
-
     def _sprawdz_poprawnosc_danych(self):
+
+        # Sprawdzenie poprawności danych systemowo
 
         # Czy wprowadzono w ogóle dane?
         nazwy_parametrow: List[str] = [
@@ -115,12 +49,9 @@ class SystemWyboruHoteli():
         for nazwa in nazwy_parametrow:
             if getattr(self.dane, nazwa) is None:
                 raise wyjatki.BrakInicjalizacjiParametru(nazwa)
-        
-
-        # Sprawdzenie poprawności danych
-
+    
         # Szerokości macierzy
-        szerokosc_oczekiwana: int = self.kryteria_hoteli.shape[1]
+        szerokosc_oczekiwana: int = self.dane.kryteria_hoteli.shape[1]
         nazwy_parametrow: List[str] = [
             "wybrane_kryteria", "minimalne_kryteria", "maksymalne_kryteria",
             "punkty_docelowe", "punkty_status_quo"
@@ -130,6 +61,9 @@ class SystemWyboruHoteli():
             if szerokosc != szerokosc_oczekiwana:
                 raise wyjatki.NiepoprawnaSzerokoscMacierzy(nazwa, szerokosc, szerokosc_oczekiwana)
         
+
+        # Sprawdzanie danych użytkownika
+
         # Wybrano co najmniej jedno kryterium
         if np.sum(self.dane.wybrane_kryteria.values.astype("int")) < 1:
             raise wyjatki.BladDanychUzytkownika("Wybrano za małą ilość kryteriów")
@@ -188,16 +122,35 @@ class SystemWyboruHoteli():
         self._dane_przetwarzane.kryteria_hoteli = kryteria_hoteli
     
 
-    def _wygeneruj_rankingi(self):
+    def wygeneruj_ranking(self, nazwa_metody: Literal["topsis", "rsm"]) -> pd.DataFrame:
+        """Metoda zwracająca dane jednego, wybranego rankingu.
+        
+        Metoda sprawdza i przetwarza zapisane wcześniej dane, i zwraca
+        DataFrame zawierający ranking danych wg wybranej metody.
+        """
+
+        self._sprawdz_poprawnosc_danych()
+        self._wykonaj_przetwarzanie_kryteriow()
+
         dane = self._dane_przetwarzane
-        self.rankingi_metod = {
-            'topsis': funkcje_rankingowe.ranking_topsis(
+        if nazwa_metody == "topsis":
+            ranking = funkcje_rankingowe.ranking_topsis(
                 dane.kryteria_hoteli
-            ),
-            'rsm': funkcje_rankingowe.ranking_rsm(
+            )
+        elif nazwa_metody == "rsm":
+            ranking = funkcje_rankingowe.ranking_rsm(
                 dane.kryteria_hoteli, 
                 dane.punkty_docelowe.values,
                 dane.punkty_status_quo.values
             )
-        }
-    
+        else:
+            raise KeyError(f"Nie znaleziono metody rankingowej o nazwie '{nazwa_metody}'")
+
+        # Sortuj ranking rosnąco
+        ranking.sort_values(ranking.columns[0])
+        # Zmień nazwę kolumny rankingowej
+        ranking.rename(columns={ranking.columns[0]:"Wartość rankingu"}, inplace=True)
+        # Uzupełnij ranking o wartości z bazy
+        ranking = pd.concat([ranking, self._dane_przetwarzane.dane_hoteli], axis=1, join='inner')
+
+        return ranking

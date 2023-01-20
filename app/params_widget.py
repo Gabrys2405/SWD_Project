@@ -38,21 +38,21 @@ class ParamsWidget(QtWidgets.QWidget):
         self._layout_column_1.addWidget(element)
 
 
-        self.t_hotele = self._utworz_jedna_tabele(
+        self.t_hotele = self._utworz_pusta_tabele(
             self._layout_column_1,
             "Hotele",
-            None,
-            True, False, False
+            przyciski_edycji=False,
+            jedno_pole_edytowania=False
         )
 
 
         # PRAWA KOLUMNA
 
-        self.t_wybrane_kyteria = self._utworz_jedna_tabele(
+        self.t_wybrane_kyteria = self._utworz_pusta_tabele(
             self._layout_column_2,
             "Kryteria uwzględniane w rankingu",
-            None,
-            True, False, True
+            przyciski_edycji=False,
+            jedno_pole_edytowania=True
         )
 
         row = QtWidgets.QHBoxLayout()
@@ -68,29 +68,29 @@ class ParamsWidget(QtWidgets.QWidget):
         self._layout_column_2.addLayout(row)
 
 
-        self.t_min_kyteria = self._utworz_jedna_tabele(
+        self.t_min_kyteria = self._utworz_pusta_tabele(
             self._layout_column_2,
             "Minimalne wartości kryteriów",
-            None,
-            True, False, True
+            przyciski_edycji=False,
+            jedno_pole_edytowania=True
         )
-        self.t_max_kyteria = self._utworz_jedna_tabele(
+        self.t_max_kyteria = self._utworz_pusta_tabele(
             self._layout_column_2,
             "Maksymalne wartości kryteriów",
-            None,
-            True, False, True
+            przyciski_edycji=False,
+            jedno_pole_edytowania=True
         )
-        self.t_p_docelowe = self._utworz_jedna_tabele(
+        self.t_p_docelowe = self._utworz_pusta_tabele(
             self._layout_column_2,
             "Punkty docelowe",
-            None,
-            True, True, False
+            przyciski_edycji=True,
+            jedno_pole_edytowania=False
         )
-        self.t_p_status_quo = self._utworz_jedna_tabele(
+        self.t_p_status_quo = self._utworz_pusta_tabele(
             self._layout_column_2,
             "Punkty status-quo",
-            None,
-            True, True, False
+            przyciski_edycji=True,
+            jedno_pole_edytowania=False
         )
 
         # FIXME Tymczasowe ładowanie
@@ -100,22 +100,28 @@ class ParamsWidget(QtWidgets.QWidget):
     def odswiez_dane_tabel(self):
         system = self.system.dane
         self._odswiez_model_w_tabeli(
-            self.t_hotele, system.dane_hoteli, True
+            self.t_hotele, system.dane_hoteli,
+            edytowalna=False
         )
         self._odswiez_model_w_tabeli(
-            self.t_wybrane_kyteria, system.wybrane_kryteria, True, converter__str_to_bool
+            self.t_wybrane_kyteria, system.wybrane_kryteria, 
+            True, converter__str_to_bool
         )
         self._odswiez_model_w_tabeli(
-            self.t_min_kyteria, system.minimalne_kryteria, True
+            self.t_min_kyteria, system.minimalne_kryteria, 
+            edytowalna=True
         )
         self._odswiez_model_w_tabeli(
-            self.t_max_kyteria, system.maksymalne_kryteria, True
+            self.t_max_kyteria, system.maksymalne_kryteria, 
+            edytowalna=True
         )
         self._odswiez_model_w_tabeli(
-            self.t_p_docelowe, system.punkty_docelowe, True
+            self.t_p_docelowe, system.punkty_docelowe, 
+            edytowalna=True
         )
         self._odswiez_model_w_tabeli(
-            self.t_p_status_quo, system.punkty_status_quo, True
+            self.t_p_status_quo, system.punkty_status_quo, 
+            edytowalna=True
         )
     
 
@@ -126,19 +132,17 @@ class ParamsWidget(QtWidgets.QWidget):
             edytowalna: bool = True,
             value_converter: Callable[[str], Any] = float
         ) -> DataFrameTableModel:
-        model = DataFrameTableModel(dataframe, value_converter)
+        model = DataFrameTableModel(dataframe, value_converter, editable=edytowalna)
         table.setModel(model)
         h = table.horizontalHeader()
         for i, _ in enumerate(dataframe.columns):
             h.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeMode.Stretch)
 
 
-    def _utworz_jedna_tabele(
+    def _utworz_pusta_tabele(
             self, 
             layout: QtWidgets.QLayout,
             tytul: str,
-            dataframe: Optional[pd.DataFrame],
-            edytowalna: bool = True, 
             przyciski_edycji: bool = True,
             jedno_pole_edytowania: bool = False
         ) -> EdiTableWidget:
@@ -150,12 +154,6 @@ class ParamsWidget(QtWidgets.QWidget):
         layout.addWidget(element)
 
         table_widget = EdiTableWidget()
-        if dataframe is not None:
-            model = DataFrameTableModel(dataframe, edytowalna)
-            table_widget.setModel(model)
-            h = table_widget.horizontalHeader()
-            for i, _ in enumerate(dataframe.columns):
-                h.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeMode.Stretch)
 
         if przyciski_edycji:
             table_widget.addRowManagementButtons()
