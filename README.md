@@ -7,8 +7,18 @@ Pakiety będą zmieniać się wraz z rozwojem aplikacji.
 Poniższe polecenie można użyć również na istniejącym środowisku w celu doinstalowania / aktualizacji pakietów.
 
 ```PowerShell
+conda create python=3.9.15 -n (nazwa_srodowiska)
 conda install --file .\conda_dependencies.txt -c conda-forge -n (nazwa_srodowiska)
 ```
+
+## Uruchomienie aplikacji
+
+Znajdując się w folderze *app*:
+
+```PowerShell
+python .\start.py
+```
+
 
 ## Schemat logiki biznesowej aplikacji
 
