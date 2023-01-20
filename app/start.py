@@ -1,7 +1,7 @@
 from PySide6 import QtCore, QtWidgets
 from hotel_loader import HotelLoader
 from system_wyboru_hoteli import SystemWyboruHoteli
-from main_screen import MainScreen
+from main_widget import MainWidget
 
 def start():
     """Uruchomienie GUI aplikacji"""
@@ -15,7 +15,7 @@ def start():
 
     system = SystemWyboruHoteli()
 
-    widget = MainScreen(system)
+    widget = MainWidget(system)
     widget.resize(1360, 720)
     # widget.setMinimumWidth(500)
     widget.show()

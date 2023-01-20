@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Literal
+from typing import List, Callable, Any
 from PySide6 import QtCore
 import numpy as np
 import pandas as pd
@@ -20,9 +20,10 @@ class EdiTableModel(QtCore.QAbstractTableModel):
 class DataFrameTableModel(EdiTableModel):
     # Class source: https://www.pythonguis.com/faq/editing-pyqt-tableview/
 
-    def __init__(self, data: pd.DataFrame, editable):
+    def __init__(self, data: pd.DataFrame, value_converter: Callable[[str], Any] = float):
         super().__init__()
         self._data = data
+        self._value_converter = value_converter
 
     def rowCount(self, index):
         return self._data.shape[0]
@@ -38,13 +39,14 @@ class DataFrameTableModel(EdiTableModel):
 
     def setData(self, index, value, role):
         if role == QtCore.Qt.EditRole:
+            
             try:
-                value = float(value)
+                new_value = self._value_converter(value)
             except:
                 return False
-            
-            self._data.values[index.row(), index.column()] = value
-            print(self._data.values[index.row(), index.column()])
+            self._data.values[index.row(), index.column()] = new_value
+            actual_value = self._data.values[index.row(), index.column()]
+            print(f"{value = }, {new_value = }, {actual_value = }, {type(actual_value)}")
             return True
         return False
     

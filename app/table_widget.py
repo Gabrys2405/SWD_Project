@@ -6,7 +6,7 @@ from typing import Optional
 from PySide6 import QtCore, QtWidgets
 import numpy as np
 import pandas as pd
-
+from addons import get_default_font
 
 
 class EdiTableWidget(QtWidgets.QWidget):
@@ -19,6 +19,7 @@ class EdiTableWidget(QtWidgets.QWidget):
         self.setLayout(self._layout)
 
         self._table_widget = QtWidgets.QTableView(self)
+        self._table_widget.setFont(get_default_font())
         self._layout.addWidget(self._table_widget)
     
 

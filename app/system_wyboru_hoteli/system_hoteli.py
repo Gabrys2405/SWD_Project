@@ -1,6 +1,7 @@
 # Autor główny: Piotr Sikorski
-
+from __future__ import annotations 
 from typing import Dict, Optional, List
+import copy
 import numpy as np
 import pandas as pd
 import wyjatki
@@ -8,9 +9,60 @@ import sprawdzenie_danych_wejsciowych
 import wstepne_przetwarzanie_kryteriow
 import funkcje_rankingowe
 
+# Indeksy kolumn, które zawierają dane kryterialne
+kolumny_kryteriow: List[int] = [2, 3, 4, 5, 7]
 
 def indeksy_na_kolumny(df: pd.DataFrame, indeksy: List[int]) -> pd.Index:
     return [df.columns[i] for i in indeksy]
+
+
+class ZbiorDanych():
+    """Klasa zbierająca dane do dalszego przetwarzania."""
+
+    def __init__(self, dane_hoteli: pd.DataFrame) -> None:
+        # === Parametry === #
+
+        # Dane wszystkich hoteli
+        self.dane_hoteli = dane_hoteli
+
+        nazwy_kolumn = indeksy_na_kolumny(self.dane_hoteli, kolumny_kryteriow)
+
+        self.wybrane_kryteria = pd.DataFrame([(True, True, True, True, True)], columns=nazwy_kolumn)
+
+        self.minimalne_kryteria = pd.DataFrame([(0, 0, 0, 0, 0)], columns=nazwy_kolumn)
+        self.maksymalne_kryteria = pd.DataFrame([(10, 10, 10000, 10, 10)], columns=nazwy_kolumn)
+
+        self.punkty_docelowe = pd.DataFrame([(10, 10, 0, 0, 10)], columns=nazwy_kolumn)
+        self.punkty_status_quo = pd.DataFrame([(0, 0, 10000, 10, 0)], columns=nazwy_kolumn)
+
+        self.czy_parking_musi_byc_darmowy: bool = False
+
+        # === Cache === #
+
+        # DataFrame zawierający wyłacznie kryteria pasujących 
+        # i niezdominowanych hoteli 
+        # Można utworzyć macierz z samymi kryteriami
+        kolumny = indeksy_na_kolumny(self.dane_hoteli, kolumny_kryteriow)
+        self.kryteria_hoteli = self.dane_hoteli[kolumny]
+    
+
+    def kopia_z_wybranymi_kryteriami(self) -> ZbiorDanych:
+        """Zwraca nowy zbiór danych, ale posiadający kolumny danych tylko wybranych przez użytkownika"""
+        kolumny = []
+        for nazwa, czy_uwzgledniana in zip(self.kryteria_hoteli.columns, self.wybrane_kryteria):
+            if czy_uwzgledniana:
+                kolumny.append(nazwa)
+        
+        kopia = copy.copy(self)  # unikam niepotrzebnego tworzenia całości klasy
+        nazwy_parametrow: List[str] = [
+            "wybrane_kryteria", "minimalne_kryteria", "maksymalne_kryteria",
+            "punkty_docelowe", "punkty_status_quo"
+        ]
+        for nazwa in nazwy_parametrow:
+            df: pd.DataFrame = getattr(self, nazwa)
+            setattr(kopia, nazwa, df[kolumny])
+        
+        return kopia
 
 
 class SystemWyboruHoteli():
@@ -21,51 +73,23 @@ class SystemWyboruHoteli():
     wyniki działań.
     """
 
-    # Indeksy kolumn, które zawierają dane kryterialne
-    kolumny_kryteriow: List[int] = [2, 3, 4, 5, 7]
-
-
     def __init__(self) -> None:
-        # === Parametry === #
+        # Oryginalne dane systemu, tworzone podczas ładowania bazy
+        self.dane: Optional[ZbiorDanych] = None
 
-        # Dane wszystkich hoteli
-        self.dane_hoteli: Optional[pd.DataFrame] = None
-
-        self.minimalne_kryteria: Optional[pd.DataFrame] = None
-        self.maksymalne_kryteria: Optional[pd.DataFrame] = None
-
-        self.punkty_docelowe: Optional[pd.DataFrame] = None
-        self.punkty_status_quo: Optional[pd.DataFrame] = None
-
-        self.czy_parking_musi_byc_darmowy: bool = False
-
-
-        # === Cache === #
-
-        # DataFrame zawierający wyłacznie kryteria pasujących 
-        # i niezdominowanych hoteli 
-        self.kryteria_hoteli: Optional[pd.DataFrame] = None
-
+        # Modyfikowane dane podczas tworzenia rankingów
+        # Zawierają tylko kolumny wybrane przez użytkownika
+        self._dane_przetwarzane: Optional[ZbiorDanych] = None
 
         # === Wyniki === #
-
         # Słownik mapujący nazwę metody do jej rankingu
         self.rankingi_metod: Optional[Dict[str, pd.DataFrame]] = None
         pass
 
 
-    def utworz_dataframey(self):
+    def zaladuj_dane(self, dane_hoteli: pd.DataFrame):
         """Tworzy DataFrame'y na podstawie danych hoteli"""
-        if self.dane_hoteli is None:
-            raise RuntimeError("Nie załadowano danych hoteli")
-        
-        nazwy_kolumn = indeksy_na_kolumny(self.dane_hoteli, self.kolumny_kryteriow)
-
-        self.minimalne_kryteria = pd.DataFrame([(0, 0, 0, 0, 0)], columns=nazwy_kolumn)
-        self.maksymalne_kryteria = pd.DataFrame([(10, 10, 10000, 10, 10)], columns=nazwy_kolumn)
-
-        self.punkty_docelowe = pd.DataFrame([(10, 10, 0, 0, 10)], columns=nazwy_kolumn)
-        self.punkty_status_quo = pd.DataFrame([(0, 0, 10000, 10, 0)], columns=nazwy_kolumn)
+        self.dane = ZbiorDanych(dane_hoteli)
         
 
     def wykonaj_wszystkie_obliczenia(self) -> None:
@@ -85,49 +109,55 @@ class SystemWyboruHoteli():
 
         # Czy wprowadzono w ogóle dane?
         nazwy_parametrow: List[str] = [
-            "dane_hoteli", "minimalne_kryteria", "maksymalne_kryteria",
+            "dane_hoteli", "wybrane_kryteria", "minimalne_kryteria", "maksymalne_kryteria",
             "punkty_docelowe", "punkty_status_quo"
         ]
         for nazwa in nazwy_parametrow:
-            if getattr(self, nazwa) is None:
+            if getattr(self.dane, nazwa) is None:
                 raise wyjatki.BrakInicjalizacjiParametru(nazwa)
         
-        
-        # Można utworzyć macierz z samymi kryteriami
-        kolumny = indeksy_na_kolumny(self.dane_hoteli, self.kolumny_kryteriow)
-        self.kryteria_hoteli = self.dane_hoteli[kolumny]
-
 
         # Sprawdzenie poprawności danych
 
         # Szerokości macierzy
         szerokosc_oczekiwana: int = self.kryteria_hoteli.shape[1]
         nazwy_parametrow: List[str] = [
-            "minimalne_kryteria", "maksymalne_kryteria",
+            "wybrane_kryteria", "minimalne_kryteria", "maksymalne_kryteria",
             "punkty_docelowe", "punkty_status_quo"
         ]
         for nazwa in nazwy_parametrow:
-            szerokosc: int = getattr(self, nazwa).shape[1]
+            szerokosc: int = getattr(self.dane, nazwa).shape[1]
             if szerokosc != szerokosc_oczekiwana:
                 raise wyjatki.NiepoprawnaSzerokoscMacierzy(nazwa, szerokosc, szerokosc_oczekiwana)
         
+        # Wybrano co najmniej jedno kryterium
+        if np.sum(self.dane.wybrane_kryteria.values.astype("int")) < 1:
+            raise wyjatki.BladDanychUzytkownika("Wybrano za małą ilość kryteriów")
+
+
+        # W tym miejscu możesz wybrać tylko kolumny wybrane przez użytkownika
+        self._dane_przetwarzane = self.dane.kopia_z_wybranymi_kryteriami()
+        dane = self._dane_przetwarzane
+
         # Granice kryteriów
         if not sprawdzenie_danych_wejsciowych.czy_granice_kryteriow_sa_poprawne(
-            self.minimalne_kryteria.values, self.maksymalne_kryteria.values
+            dane.minimalne_kryteria.values, 
+            dane.maksymalne_kryteria.values
         ):
             raise wyjatki.BladDanychUzytkownika("Kryteria minimalne i maksymalne są sprzeczne")
         
         # Niesprzeczności zbiorów
         if not sprawdzenie_danych_wejsciowych.czy_punkty_w_zbiorze_wzajemnie_niesprzeczne(
-            self.punkty_docelowe.values
+            dane.punkty_docelowe.values
         ):
             raise wyjatki.BladDanychUzytkownika("Punkty w zbiorze punktów docelowych są wzajemnie sprzeczne")
         if not sprawdzenie_danych_wejsciowych.czy_punkty_w_zbiorze_wzajemnie_niesprzeczne(
-            self.punkty_status_quo.values
+            dane.punkty_status_quo.values
         ):
             raise wyjatki.BladDanychUzytkownika("Punkty w zbiorze punktów status-quo są wzajemnie sprzeczne")
         if not sprawdzenie_danych_wejsciowych.czy_zbiory_wzajemnie_niesprzeczne(
-            self.punkty_docelowe.values, self.punkty_status_quo.values
+            dane.punkty_docelowe.values, 
+            dane.punkty_status_quo.values
         ):
             raise wyjatki.BladDanychUzytkownika("Zbiory punktów docelowych i status-quo są wzajemnie sprzeczne") 
 
@@ -136,14 +166,15 @@ class SystemWyboruHoteli():
     
 
     def _wykonaj_przetwarzanie_kryteriow(self):
-        kryteria_hoteli = self.kryteria_hoteli
+        dane = self._dane_przetwarzane
+        kryteria_hoteli = dane.kryteria_hoteli
 
         kryteria_hoteli = wstepne_przetwarzanie_kryteriow.filtruj_hotele__czy_parking_darmowy(
-            self.dane_hoteli, kryteria_hoteli, self.czy_parking_musi_byc_darmowy
+            dane.dane_hoteli, kryteria_hoteli, dane.czy_parking_musi_byc_darmowy
         )
 
         kryteria_hoteli = wstepne_przetwarzanie_kryteriow.filtruj_hotele__wartosci_kryteriow_minimalne_i_maksymalne(
-            kryteria_hoteli, self.minimalne_kryteria.values, self.maksymalne_kryteria.values
+            kryteria_hoteli, dane.minimalne_kryteria.values, dane.maksymalne_kryteria.values
         )
 
         kryteria_hoteli = wstepne_przetwarzanie_kryteriow.zamien_maksymalizacje_na_minimalizacje(
@@ -154,15 +185,19 @@ class SystemWyboruHoteli():
             kryteria_hoteli
         )
 
-        self.kryteria_hoteli = kryteria_hoteli
+        self._dane_przetwarzane.kryteria_hoteli = kryteria_hoteli
     
 
     def _wygeneruj_rankingi(self):
+        dane = self._dane_przetwarzane
         self.rankingi_metod = {
             'topsis': funkcje_rankingowe.ranking_topsis(
-                self.kryteria_hoteli
+                dane.kryteria_hoteli
             ),
             'rsm': funkcje_rankingowe.ranking_rsm(
-                self.kryteria_hoteli, self.punkty_docelowe.values, self.punkty_status_quo.values
+                dane.kryteria_hoteli, 
+                dane.punkty_docelowe.values,
+                dane.punkty_status_quo.values
             )
         }
+    
