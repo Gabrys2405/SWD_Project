@@ -73,6 +73,14 @@ class SystemWyboruHoteli():
         self._dane_przetwarzane = self.dane.kopia_z_wybranymi_kryteriami()
         dane = self._dane_przetwarzane
 
+        # Punkty docelowe i status-quo muszą być zmienione na minimalizację!
+        dane.punkty_docelowe = wstepne_przetwarzanie_kryteriow.zamien_maksymalizacje_na_minimalizacje(
+            dane.punkty_docelowe, dane.kolumny_maks_na_min__lista
+        )
+        dane.punkty_status_quo = wstepne_przetwarzanie_kryteriow.zamien_maksymalizacje_na_minimalizacje(
+            dane.punkty_status_quo, dane.kolumny_maks_na_min__lista
+        )
+
         # Granice kryteriów
         if not sprawdzenie_danych_wejsciowych.czy_granice_kryteriow_sa_poprawne(
             dane.minimalne_kryteria.values, 
@@ -112,7 +120,7 @@ class SystemWyboruHoteli():
         )
 
         kryteria_hoteli = wstepne_przetwarzanie_kryteriow.zamien_maksymalizacje_na_minimalizacje(
-            kryteria_hoteli
+            kryteria_hoteli, dane.kolumny_maks_na_min__lista
         )
 
         kryteria_hoteli = wstepne_przetwarzanie_kryteriow.wyznacz_punkty_niezdominowane(

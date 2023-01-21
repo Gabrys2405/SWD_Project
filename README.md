@@ -41,3 +41,8 @@ Klasa _SystemWyboruHoteli_ **nie** ładuje danych z pliku, lecz otrzymuje DataFr
 BARDZO WAŻNE: W każdej metodzie należy zachować oryginalne indeksy wierszy - są one odniesieniem do bazy danych!
 
 W środku funkcji można tworzyć wykresy za pomocą *matplotlib.pyplot*, a następnie wyświetlać je w oknie programu po prostu wywołując *matplotlib.pyplot.show()*
+
+
+## Testy jednostkowe
+
+W folderze *test_app* znajdują się proste testy jednostkowe *pytest*, dla funkcji do uzupełnienia (oprócz jednej funkcji) - warto z tego korzystać.

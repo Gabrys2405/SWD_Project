@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import List
 import copy
 import pandas as pd
+import numpy as np
 
 
 class ZbiorDanych():
@@ -40,7 +41,14 @@ class ZbiorDanych():
         # i niezdominowanych hoteli 
         # Można utworzyć macierz z samymi kryteriami
         self.kryteria_hoteli = self.dane_hoteli[nazwy_kolumn]
+
+        self.kolumny_maks_na_min = pd.DataFrame([(True, True, False, False, True)], columns=nazwy_kolumn)
     
+    
+    @property
+    def kolumny_maks_na_min__lista(self) -> List[int]:
+        return list(np.where(self.kolumny_maks_na_min)[0])
+
 
     def kopia_z_wybranymi_kryteriami(self) -> ZbiorDanych:
         """Zwraca nowy zbiór danych, ale posiadający kolumny danych tylko wybranych przez użytkownika"""
@@ -52,7 +60,8 @@ class ZbiorDanych():
         kopia = copy.copy(self)  # unikam niepotrzebnego tworzenia całości klasy
         nazwy_parametrow: List[str] = [
             "wybrane_kryteria", "minimalne_kryteria", "maksymalne_kryteria",
-            "punkty_docelowe", "punkty_status_quo"
+            "punkty_docelowe", "punkty_status_quo", "kolumny_maks_na_min",
+            "kryteria_hoteli"
         ]
         for nazwa in nazwy_parametrow:
             df: pd.DataFrame = getattr(self, nazwa)
