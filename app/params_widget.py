@@ -89,6 +89,18 @@ class ParamsWidget(QtWidgets.QWidget):
         element.setStyleSheet("border-top: 1px double black; padding-top: 5px")
         self._layout_column_2.addWidget(element)
 
+        row = QtWidgets.QHBoxLayout()
+
+        element = QtWidgets.QLabel("Czy usunąć punkty zdominowane?")
+        element.setFont(get_default_font())
+        row.addWidget(element)
+
+        element = QtWidgets.QCheckBox()
+        element.stateChanged.connect(self._przelacz_punkty_zdominowane)
+        row.addWidget(element)
+
+        self._layout_column_2.addLayout(row)
+
         self.t_p_docelowe = self._utworz_pusta_tabele(
             self._layout_column_2,
             "Punkty docelowe",
@@ -175,6 +187,11 @@ class ParamsWidget(QtWidgets.QWidget):
     def _przelacz_przymus_parkingu(self, v: bool):
         self.system.dane.czy_parking_musi_byc_darmowy = v != 0
         print(self.system.dane.czy_parking_musi_byc_darmowy, type(self.system.dane.czy_parking_musi_byc_darmowy))
+    
+
+    def _przelacz_punkty_zdominowane(self, v: bool):
+        self.system.dane.usun_punkty_zdominowane = v != 0
+        print(self.system.dane.usun_punkty_zdominowane, type(self.system.dane.usun_punkty_zdominowane))
 
 
     def wczytaj_baze(self, filename: Optional[str] = None):

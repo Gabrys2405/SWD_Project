@@ -123,9 +123,10 @@ class SystemWyboruHoteli():
             kryteria_hoteli, dane.kolumny_maks_na_min__lista
         )
 
-        kryteria_hoteli = wstepne_przetwarzanie_kryteriow.wyznacz_punkty_niezdominowane(
-            kryteria_hoteli
-        )
+        if dane.usun_punkty_zdominowane:
+            kryteria_hoteli = wstepne_przetwarzanie_kryteriow.wyznacz_punkty_niezdominowane(
+                kryteria_hoteli
+            )
 
         self._dane_przetwarzane.kryteria_hoteli = kryteria_hoteli
     

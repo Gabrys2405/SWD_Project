@@ -34,6 +34,8 @@ class ZbiorDanych():
         self.punkty_status_quo = pd.DataFrame([(0, 0, 10000, 10, 0)], columns=nazwy_kolumn)
 
         self.czy_parking_musi_byc_darmowy: bool = False
+        
+        self.usun_punkty_zdominowane: bool = False
 
         # === Cache === #
 
