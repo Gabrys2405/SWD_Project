@@ -72,6 +72,7 @@ def filtruj_hotele__czy_parking_darmowy(
     # Podpowiedzi:
     #  - kryteria_hoteli.drop(indeks) usuwa wiersz
     #  - kryteria_hoteli.index[i] zwraca indeks do użycia w metodzie drop()
+    #  - pd.concat([...], axis=?, join='inner') może być przydatne
     # Istotne jest, aby zachować pierwotne indeksowanie z kryteria_hoteli
 
     # Nie wiem, czy ktoś ogarnie, więc pewnie sam to napiszę ~PS

@@ -155,7 +155,7 @@ class SystemWyboruHoteli():
             raise KeyError(f"Nie znaleziono metody rankingowej o nazwie '{nazwa_metody}'")
 
         # Sortuj ranking rosnąco
-        ranking.sort_values(ranking.columns[0])
+        # ranking.sort_values(ranking.columns[0])
         # Zmień nazwę kolumny rankingowej
         ranking.rename(columns={ranking.columns[0]:"Wartość rankingu"}, inplace=True)
         # Uzupełnij ranking o wartości z bazy
