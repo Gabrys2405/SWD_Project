@@ -7,3 +7,4 @@ if p not in sys.path:
 
 from system_hoteli import SystemWyboruHoteli
 import funkcje_rankingowe
+from zapis_rankingu import zapisz_ranking

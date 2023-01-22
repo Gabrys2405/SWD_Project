@@ -80,6 +80,15 @@ class ParamsWidget(QtWidgets.QWidget):
             przyciski_edycji=False,
             jedno_pole_edytowania=True
         )
+
+        element = QtWidgets.QLabel("WYPEŁNIA EKSPERT", alignment=QtCore.Qt.AlignHCenter)
+        font = get_default_font()
+        font.setItalic(True)
+        # font.setPixelSize(16)
+        element.setFont(font)
+        element.setStyleSheet("border-top: 1px double black; padding-top: 5px")
+        self._layout_column_2.addWidget(element)
+
         self.t_p_docelowe = self._utworz_pusta_tabele(
             self._layout_column_2,
             "Punkty docelowe",
