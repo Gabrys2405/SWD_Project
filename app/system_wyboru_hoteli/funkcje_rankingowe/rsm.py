@@ -74,10 +74,11 @@ def ranking_rsm(
     # #ranking
     pozycja = np.array(range(wartosci_funkcji_kryterialnej.shape[0])) + 1
     ranking = np.array([pozycja, wartosci_funkcji_kryterialnej]).T
-    ranking = ranking[ranking[:, 1].argsort()[::-1]]
+    # ranking = ranking[ranking[:, 1].argsort()[::-1]]
     ranking = ranking[:,:1]
     # print(ranking)
     ranking = pd.DataFrame(ranking, index = kryteria_hoteli.index)
+    ranking.sort_index()
     # print(ranking)
     return ranking
 
