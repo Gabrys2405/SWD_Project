@@ -30,5 +30,6 @@ def test_topsis():
     
     assert isinstance(ranking, pd.DataFrame), "Zwracany ranking nie jest DataFrame'm"
 
-    ranking_indeksy = list(ranking.index).sort()
+    ranking_indeksy = list(ranking.index)
+    ranking_indeksy.sort()
     assert indeksy == ranking_indeksy, "Nie zachowano indeksowania z 'kryteria_hoteli'"

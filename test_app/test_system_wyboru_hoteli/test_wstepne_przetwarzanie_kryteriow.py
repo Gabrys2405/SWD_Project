@@ -42,7 +42,8 @@ def test_filtruj_hotele__wartosci_kryteriow_minimalne_i_maksymalne():
 
     assert isinstance(ranking, pd.DataFrame), "Zwracany ranking nie jest DataFrame'm"
 
-    ranking_indeksy = list(ranking.index).sort()
+    ranking_indeksy = list(ranking.index)
+    ranking_indeksy.sort()
     assert indeksy == ranking_indeksy, "Nie zachowano indeksowania z 'kryteria_hoteli'"
 
     # Sprawdzenie wyniku
@@ -67,7 +68,8 @@ def test_zamien_maksymalizacje_na_minimalizacje():
 
     assert isinstance(v, pd.DataFrame), "Zwracany obiekt nie jest DataFrame'm"
 
-    ranking_indeksy = list(v.index).sort()
+    ranking_indeksy = list(v.index)
+    ranking_indeksy.sort()
     assert indeksy == ranking_indeksy, "Nie zachowano indeksowania z 'kryteria_hoteli'"
 
     # Sprawdzenie wyniku
@@ -107,7 +109,8 @@ def test_wyznacz_punkty_niezdominowane():
 
     assert isinstance(v, pd.DataFrame), "Zwracany obiekt nie jest DataFrame'm"
 
-    ranking_indeksy = list(v.index).sort()
+    ranking_indeksy = list(v.index)
+    ranking_indeksy.sort()
     assert indeksy == ranking_indeksy, "Nie zachowano indeksowania z 'kryteria_hoteli'"
 
     # Sprawdzenie wyniku
