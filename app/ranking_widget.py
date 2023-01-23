@@ -18,7 +18,8 @@ class RankingWidget(QtWidgets.QWidget):
 
     _metody_rankingowe: List[Tuple[str, str]] = [
         ("topsis", "TOPSIS"),
-        ("rsm", "RSM")
+        ("rsm", "RSM"),
+        ("safety_principle", "Safety Principle"),
     ]
 
     def __init__(self, system: SystemWyboruHoteli):

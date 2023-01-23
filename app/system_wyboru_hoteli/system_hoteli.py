@@ -152,6 +152,12 @@ class SystemWyboruHoteli():
                 dane.punkty_docelowe.values,
                 dane.punkty_status_quo.values
             )
+        elif nazwa_metody == "safety_principle":
+            ranking = funkcje_rankingowe.ranking_safety_principle(
+                dane.kryteria_hoteli, 
+                dane.punkty_docelowe.values,
+                dane.punkty_status_quo.values
+            )
         else:
             raise KeyError(f"Nie znaleziono metody rankingowej o nazwie '{nazwa_metody}'")
 
