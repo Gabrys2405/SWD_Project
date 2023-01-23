@@ -38,10 +38,10 @@ def ranking_rsm(
         DataFrame zawierający jedną kolumnę z wartościami rankingowymi, indeksowanymi
         jak w kryteria_hoteli
     """
-    wartosci_funkcji_kryterialnej = np.zeros((kryteria_hoteli.shape[0],))
-
-    for iu in range(kryteria_hoteli.shape[0]):
-        u = kryteria_hoteli[iu, :]  # punkt u - do określenia wartości
+    wartosci_funkcji_kryterialnej = np.zeros((kryteria_hoteli.values.shape[0],))
+    # print(wartosci_funkcji_kryterialnej)
+    for iu in range(kryteria_hoteli.values.shape[0]):
+        u = kryteria_hoteli.values[iu, :]  # punkt u - do określenia wartości
 
         suma_pol = 0  # suma pól prostokątów
         pary_wektorow_prostokatow = []  # wektory tworzące potrzebne prostokąty
@@ -71,15 +71,45 @@ def ranking_rsm(
         # Złożenie do wartości funkcji kryterialnej
         wartosci_funkcji_kryterialnej[iu] = np.sum(wagi * np.array(odleglosci))
 
-    #ranking
+    # #ranking
     pozycja = np.array(range(wartosci_funkcji_kryterialnej.shape[0])) + 1
     ranking = np.array([pozycja, wartosci_funkcji_kryterialnej]).T
     ranking = ranking[ranking[:, 1].argsort()[::-1]]
     ranking = ranking[:,:1]
-    ranking = pd.DataFrame(ranking)
-
+    # print(ranking)
+    ranking = pd.DataFrame(ranking, index = kryteria_hoteli.index)
+    # print(ranking)
     return ranking
 
 
+indeksy = [3, 6, 12]
+
+kryteria_hoteli = pd.DataFrame([
+            (-2, 0),
+            (1, -3),
+            (0, -1)
+        ], 
+        index=indeksy,
+        columns=[0, 1]
+    )
+
+punkty_docelowe = np.array([
+        [-1, 3],
+        [0, 1],
+        [2, 0],
+    ])
+
+punkty_status_quo = np.array([
+        [-2,0],
+        [-1,-2],
+        [0,-3],
+    ])
+
+ranking = ranking_rsm(
+        kryteria_hoteli,
+        punkty_docelowe,
+        punkty_status_quo
+    )
 
 
+# print(ranking)
