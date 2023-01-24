@@ -49,7 +49,7 @@ class ZbiorDanych():
     
     @property
     def kolumny_maks_na_min__lista(self) -> List[int]:
-        return list(np.where(self.kolumny_maks_na_min)[0])
+        return list(np.where(self.kolumny_maks_na_min)[-1])
 
 
     def kopia_z_wybranymi_kryteriami(self) -> ZbiorDanych:
@@ -70,3 +70,12 @@ class ZbiorDanych():
             setattr(kopia, nazwa, df[kolumny])
         
         return kopia
+
+    def __repr__(self) -> str:
+        s = f"{self.dane_hoteli.shape = }, {self.kryteria_hoteli.shape = }\n"
+        s += f"    Min. kryteria: \n{self.minimalne_kryteria}\n"
+        s += f"    Max. kryteria: \n{self.maksymalne_kryteria}\n"
+        s += f"    P. docelowe: \n{self.punkty_docelowe}\n"
+        s += f"    P. status-quo: \n{self.punkty_status_quo}\n"
+        s += f"    Kryteria hoteli: \n{self.kryteria_hoteli}\n"
+        return s

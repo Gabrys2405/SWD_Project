@@ -35,6 +35,8 @@ class DataFrameTableModel(EdiTableModel):
         if index.isValid():
             if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
                 value = self._data.values[index.row(), index.column()]
+                if isinstance(value, float):
+                    return '{:#.3g}'.format(value)
                 return str(value)
 
     def setData(self, index, value, role):
@@ -44,8 +46,8 @@ class DataFrameTableModel(EdiTableModel):
             except:
                 return False
             self._data.values[index.row(), index.column()] = new_value
-            actual_value = self._data.values[index.row(), index.column()]
-            print(f"{value = }, {new_value = }, {actual_value = }, {type(actual_value)}")
+            # actual_value = self._data.values[index.row(), index.column()]
+            # print(f"{value = }, {new_value = }, {actual_value = }, {type(actual_value)}")
             return True
         return False
     

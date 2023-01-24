@@ -18,6 +18,7 @@ class RankingWidget(QtWidgets.QWidget):
 
     _metody_rankingowe: List[Tuple[str, str]] = [
         ("topsis", "TOPSIS"),
+        ("fuzzy_topsis", "Fuzzy TOPSIS"),
         ("rsm", "RSM"),
         ("safety_principle", "Safety Principle"),
     ]
@@ -34,9 +35,9 @@ class RankingWidget(QtWidgets.QWidget):
         self.setLayout(self._main_layout)
 
         self._layout_column_1 = QtWidgets.QVBoxLayout(self)
-        self._main_layout.addLayout(self._layout_column_1)
+        self._main_layout.addLayout(self._layout_column_1, 2)
         self._layout_column_2 = QtWidgets.QVBoxLayout(self)
-        self._main_layout.addLayout(self._layout_column_2)
+        self._main_layout.addLayout(self._layout_column_2, 1)
 
 
         # LEWA KOLUMNA

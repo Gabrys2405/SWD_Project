@@ -32,8 +32,8 @@ def filtruj_hotele__wartosci_kryteriow_minimalne_i_maksymalne(
     columns = kryteria_hoteli.columns
     for i, column in enumerate(columns):
         kryteria_hoteli = kryteria_hoteli[
-            (kryteria_hoteli[column] < wartosci_maksymalne[i]) & 
-            (kryteria_hoteli[column] > wartosci_minimalne[i])]
+            (kryteria_hoteli[column] <= wartosci_maksymalne[i]) & 
+            (kryteria_hoteli[column] >= wartosci_minimalne[i])]
     return kryteria_hoteli
 
 def filtruj_hotele__czy_parking_darmowy(
@@ -64,6 +64,8 @@ def filtruj_hotele__czy_parking_darmowy(
     pd.DataFrame
         DataFrame zawierający kryteria hoteli spełniające warunki parkingu
     """
+    if not czy_parking_musi_byc_darmowy:
+        return kryteria_hoteli
     return kryteria_hoteli[wszystkie_dane_hoteli["Bezpłatny parking "] == czy_parking_musi_byc_darmowy]
 
 
@@ -97,6 +99,7 @@ def zamien_maksymalizacje_na_minimalizacje(
         DataFrame zawierający kryteria hoteli poprawione na minimalizację
     """
     for column in kolumny_do_zmiany_na_minimalizacje:
+        column = kryteria_hoteli.columns[column]
         kryteria_hoteli[column] = [10 - i for i in kryteria_hoteli[column]]
     return kryteria_hoteli
 
@@ -120,6 +123,7 @@ def wyznacz_punkty_niezdominowane(
         DataFrame zawierający niezdominowane kryteria hoteli
     """
     niezdominowane = []
+    indeksy = []
     for i, point in kryteria_hoteli.iterrows():
         is_dominated = False
         for j, other_point in kryteria_hoteli.iterrows():
@@ -135,4 +139,35 @@ def wyznacz_punkty_niezdominowane(
                 break
         if not is_dominated:
             niezdominowane.append(point)
-    return pd.DataFrame(niezdominowane, index = kryteria_hoteli.index)
+            indeksy.append(kryteria_hoteli.index[i])
+    return pd.DataFrame(niezdominowane, index = indeksy)
+
+
+def normalizuj_kryteria(
+        kryteria_hoteli: pd.DataFrame
+    ) -> pd.DataFrame:
+    """Normalizuje wartości kryteriów do przedziału 0-1.
+    
+    Dla równego traktowania kryteriów należy znormalizować wszystkie kryteria
+    jako: ([wartość kolumny] - [wartość min kolumny]) / ([wartość max kolumny] - [wartość min kolumny])
+
+    Parameters
+    ----------
+    kryteria_hoteli : pd.DataFrame
+        DataFrame zawierający wyłącznie kryteria
+    
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame zawierający znormalizowane kryteria hoteli 
+    """
+
+    values = kryteria_hoteli.values
+    min_kolumn = np.min(values, axis=0)
+    max_kolumn = np.max(values, axis=0) - min_kolumn
+
+    for i in range(values.shape[0]):
+        row = kryteria_hoteli.iloc[i]
+        kryteria_hoteli.iloc[i] = (row - min_kolumn) / max_kolumn
+    
+    return kryteria_hoteli

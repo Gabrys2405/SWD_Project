@@ -44,7 +44,7 @@ def test_filtruj_hotele__wartosci_kryteriow_minimalne_i_maksymalne():
 
     ranking_indeksy = list(ranking.index)
     ranking_indeksy.sort()
-    assert indeksy == ranking_indeksy, "Nie zachowano indeksowania z 'kryteria_hoteli'"
+    assert [6] == ranking_indeksy, "Nie zachowano indeksowania z 'kryteria_hoteli'"
 
     # Sprawdzenie wyniku
     assert (ranking.values == np.array([1, -3])).all()
@@ -103,19 +103,54 @@ def test_wyznacz_punkty_niezdominowane():
         columns=[0, 1]
     )
 
-    v = wstepne_przetwarzanie_kryteriow.zamien_maksymalizacje_na_minimalizacje(
-        kryteria_hoteli, [1]
+    v = wstepne_przetwarzanie_kryteriow.wyznacz_punkty_niezdominowane(
+        kryteria_hoteli
     )
 
     assert isinstance(v, pd.DataFrame), "Zwracany obiekt nie jest DataFrame'm"
+    assert isinstance(v.values, np.ndarray)
 
     ranking_indeksy = list(v.index)
+    ranking_indeksy.sort()
+
+    # Sprawdzenie wyniku
+    assert v.values.shape[0] == 3, "Uzyskano inną ilość punktów niezdominowanych"
+    assert [3, 11, 17] == ranking_indeksy, "Nie zachowano indeksowania z 'kryteria_hoteli'"
+    wynik = np.array([
+        [-2,  0],
+        [ 1, -3],
+        [ 0, -1]
+    ])
+    assert (v.values == wynik).all()
+
+
+def test_normalizuj_kryteria():
+    """Test daje możliwość podstawowej weryfikacji kodu."""
+
+    indeksy = [3, 6, 12]
+
+    kryteria_hoteli = pd.DataFrame([
+            (-2, 0),
+            (1, -4),
+            (0, -1)
+        ], 
+        index=indeksy,
+        columns=[0, 1]
+    )
+
+    ranking = wstepne_przetwarzanie_kryteriow.normalizuj_kryteria(
+        kryteria_hoteli
+    )
+
+    assert isinstance(ranking, pd.DataFrame), "Zwracany ranking nie jest DataFrame'm"
+
+    ranking_indeksy = list(ranking.index)
     ranking_indeksy.sort()
     assert indeksy == ranking_indeksy, "Nie zachowano indeksowania z 'kryteria_hoteli'"
 
     # Sprawdzenie wyniku
-    assert (v.values == np.array([
-        [-2,  0],
-        [ 1, -3],
-        [ 0, -1]
+    assert (ranking.values == np.array([
+        [0, 1],
+        [1, 0],
+        [2/3, 0.75]
     ])).all()

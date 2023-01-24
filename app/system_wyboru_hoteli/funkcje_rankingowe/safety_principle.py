@@ -155,18 +155,17 @@ def ranking_safety_principle(
             a1 = punkty_docelowe[ia1, :]
             krzywe_Woronoja.append(KrzywaWoronoja(a1, a0))
             
-    ranking: np.ndarray = np.zeros((kryteria_hoteli.shape[0], 2))
+    ranking: np.ndarray = np.zeros((kryteria_hoteli.shape[0], ))
     
     for ia in range(kryteria_hoteli.shape[0]):
         a = kryteria_hoteli.values[ia, :]
         suma_poz: float = 0
         for k in krzywe_Woronoja:
             suma_poz += k.pozycja_na_krzywej(a)
-        ranking[ia, 0] = ia + 1
-        ranking[ia, 1] = suma_poz
+        ranking[ia] = suma_poz
     
     rank = pd.DataFrame(ranking, index = kryteria_hoteli.index)
-    rank.sort_values([rank.columns[0]])
+    rank.sort_values([rank.columns[0]], inplace=True)
     
     return rank
             

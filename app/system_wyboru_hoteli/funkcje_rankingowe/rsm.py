@@ -62,7 +62,7 @@ def ranking_rsm(
         wagi: np.ndarray = np.array(pola_prostokatow) / suma_pol
 
         # Zliczenie odległości punktów prostokątów
-        odleglosci: List[float] = []
+        odleglosci = []
         for vA0, vA1 in pary_wektorow_prostokatow:
             dA0 = np.sqrt(np.sum((vA0 - u) ** 2))
             dA1 = np.sqrt(np.sum((vA1 - u) ** 2))
@@ -78,39 +78,39 @@ def ranking_rsm(
     ranking = ranking[:,1:]
     # print(ranking)
     ranking = pd.DataFrame(ranking, index = kryteria_hoteli.index)
-    ranking.sort_values(by=[0], inplace=True, ascending=False)
+    ranking.sort_values(by=[0], inplace=True, ascending=True)
     # print(ranking)
     return ranking
 
 
-indeksy = [3, 6, 12]
+# indeksy = [3, 6, 12]
 
-kryteria_hoteli = pd.DataFrame([
-            (-2, 0),
-            (1, -3),
-            (0, -1)
-        ], 
-        index=indeksy,
-        columns=[0, 1]
-    )
+# kryteria_hoteli = pd.DataFrame([
+#             (-2, 0),
+#             (1, -3),
+#             (0, -1)
+#         ], 
+#         index=indeksy,
+#         columns=[0, 1]
+#     )
 
-punkty_docelowe = np.array([
-        [-1, 3],
-        [0, 1],
-        [2, 0],
-    ])
+# punkty_docelowe = np.array([
+#         [-1, 3],
+#         [0, 1],
+#         [2, 0],
+#     ])
 
-punkty_status_quo = np.array([
-        [-2,0],
-        [-1,-2],
-        [0,-3],
-    ])
+# punkty_status_quo = np.array([
+#         [-2,0],
+#         [-1,-2],
+#         [0,-3],
+#     ])
 
-ranking = ranking_rsm(
-        kryteria_hoteli,
-        punkty_docelowe,
-        punkty_status_quo
-    )
+# ranking = ranking_rsm(
+#         kryteria_hoteli,
+#         punkty_docelowe,
+#         punkty_status_quo
+#     )
 
 
-print(ranking)
+# print(ranking)

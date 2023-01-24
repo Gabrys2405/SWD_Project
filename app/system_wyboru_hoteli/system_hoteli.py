@@ -74,6 +74,7 @@ class SystemWyboruHoteli():
         dane = self._dane_przetwarzane
 
         # Punkty docelowe i status-quo muszą być zmienione na minimalizację!
+        # print(dane.punkty_docelowe, dane.kolumny_maks_na_min__lista)
         dane.punkty_docelowe = wstepne_przetwarzanie_kryteriow.zamien_maksymalizacje_na_minimalizacje(
             dane.punkty_docelowe, dane.kolumny_maks_na_min__lista
         )
@@ -83,8 +84,8 @@ class SystemWyboruHoteli():
 
         # Granice kryteriów
         if not sprawdzenie_danych_wejsciowych.czy_granice_kryteriow_sa_poprawne(
-            dane.minimalne_kryteria.values, 
-            dane.maksymalne_kryteria.values
+            dane.minimalne_kryteria.values[0], 
+            dane.maksymalne_kryteria.values[0]
         ):
             raise wyjatki.BladDanychUzytkownika("Kryteria minimalne i maksymalne są sprzeczne")
         
@@ -116,7 +117,7 @@ class SystemWyboruHoteli():
         )
 
         kryteria_hoteli = wstepne_przetwarzanie_kryteriow.filtruj_hotele__wartosci_kryteriow_minimalne_i_maksymalne(
-            kryteria_hoteli, dane.minimalne_kryteria.values, dane.maksymalne_kryteria.values
+            kryteria_hoteli, dane.minimalne_kryteria.values[0], dane.maksymalne_kryteria.values[0]
         )
 
         kryteria_hoteli = wstepne_przetwarzanie_kryteriow.zamien_maksymalizacje_na_minimalizacje(
@@ -128,7 +129,12 @@ class SystemWyboruHoteli():
                 kryteria_hoteli
             )
 
+        kryteria_hoteli = wstepne_przetwarzanie_kryteriow.normalizuj_kryteria(
+            kryteria_hoteli
+        )
+
         self._dane_przetwarzane.kryteria_hoteli = kryteria_hoteli
+        print(self._dane_przetwarzane)
     
 
     def wygeneruj_ranking(self, nazwa_metody: Literal["topsis", "rsm"]) -> pd.DataFrame:
@@ -142,9 +148,17 @@ class SystemWyboruHoteli():
         self._wykonaj_przetwarzanie_kryteriow()
 
         dane = self._dane_przetwarzane
+        szerokosc = dane.kryteria_hoteli.values.shape[0]
         if nazwa_metody == "topsis":
             ranking = funkcje_rankingowe.ranking_topsis(
-                dane.kryteria_hoteli
+                dane.kryteria_hoteli,
+                np.ones((szerokosc,)) / szerokosc  # wagi równe
+            )
+        elif nazwa_metody == "fuzzy_topsis":
+            ranking = funkcje_rankingowe.ranking_fuzzy_topsis(
+                dane.kryteria_hoteli,
+                np.ones((szerokosc,)) / szerokosc,  # wagi równe
+                np.zeros((szerokosc,)).astype('bool')  # każda wartość to koszt
             )
         elif nazwa_metody == "rsm":
             ranking = funkcje_rankingowe.ranking_rsm(
@@ -160,6 +174,10 @@ class SystemWyboruHoteli():
             )
         else:
             raise KeyError(f"Nie znaleziono metody rankingowej o nazwie '{nazwa_metody}'")
+
+        print("\nOtrzymano ranking:\n")
+        print(ranking)
+        print()
 
         # Sortuj ranking rosnąco
         # ranking.sort_values(ranking.columns[0])
