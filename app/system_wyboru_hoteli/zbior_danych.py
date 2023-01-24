@@ -27,11 +27,11 @@ class ZbiorDanych():
 
         self.wybrane_kryteria = pd.DataFrame([(True, True, True, True, True)], columns=nazwy_kolumn)
 
-        self.minimalne_kryteria = pd.DataFrame([(0, 0, 0, 0, 0)], columns=nazwy_kolumn)
-        self.maksymalne_kryteria = pd.DataFrame([(10, 10, 10000, 10, 10)], columns=nazwy_kolumn)
+        self.minimalne_kryteria = pd.DataFrame([(0.0, 0, 0, 0, 0)], columns=nazwy_kolumn)
+        self.maksymalne_kryteria = pd.DataFrame([(10.0, 10, 10000, 10, 10)], columns=nazwy_kolumn)
 
-        self.punkty_docelowe = pd.DataFrame([(10, 10, 0, 0, 10)], columns=nazwy_kolumn)
-        self.punkty_status_quo = pd.DataFrame([(0, 0, 10000, 10, 0)], columns=nazwy_kolumn)
+        self.punkty_docelowe = pd.DataFrame([(10.0, 10, 0, 0, 10)], columns=nazwy_kolumn)
+        self.punkty_status_quo = pd.DataFrame([(0.0, 0, 10000, 10, 0)], columns=nazwy_kolumn)
 
         self.czy_parking_musi_byc_darmowy: bool = False
         

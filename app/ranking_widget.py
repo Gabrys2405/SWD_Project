@@ -115,7 +115,7 @@ class RankingWidget(QtWidgets.QWidget):
         self.b_zapisz_ranking.setDisabled(False)
 
         # Wgraj ranking do tabeli
-        model = DataFrameTableModel(ranking)
+        model = DataFrameTableModel(ranking, editable=False)
         self.t_ranking.setModel(model)
         h = self.t_ranking.horizontalHeader()
         for i, _ in enumerate(ranking.columns):

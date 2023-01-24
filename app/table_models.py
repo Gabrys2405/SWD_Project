@@ -36,6 +36,8 @@ class DataFrameTableModel(EdiTableModel):
             if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
                 value = self._data.values[index.row(), index.column()]
                 if isinstance(value, float):
+                    if value >= 100:
+                        return str(value)
                     return '{:#.3g}'.format(value)
                 return str(value)
 
@@ -45,7 +47,7 @@ class DataFrameTableModel(EdiTableModel):
                 new_value = self._value_converter(value)
             except:
                 return False
-            self._data.values[index.row(), index.column()] = new_value
+            self._data.iloc[index.row(), index.column()] = new_value
             # actual_value = self._data.values[index.row(), index.column()]
             # print(f"{value = }, {new_value = }, {actual_value = }, {type(actual_value)}")
             return True
