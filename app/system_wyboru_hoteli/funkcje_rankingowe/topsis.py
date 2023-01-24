@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
-from app.hotel_loader import HotelLoader
+
 
 "Implementacja tradycyjnej Topsis"
 
 def ranking_topsis(
-        kryteria_hoteli: np.ndarray,
+        kryteria_hoteli: pd.DataFrame,
         wagi: np.ndarray,
     ) -> pd.DataFrame:
     """Funkcja tworząca ranking metodą TOPSIS
@@ -35,14 +35,16 @@ def ranking_topsis(
     odl_od_idealnego = np.sqrt(np.sum((kryteria_z_wagami - rozw_idealne)**2,axis = 1).astype(float))
     odl_od_antyidealnego = np.sqrt(np.sum((kryteria_z_wagami - rozw_antyidealne) ** 2, axis=1).astype(float))
     ranking = odl_od_antyidealnego / (odl_od_antyidealnego + odl_od_idealnego)
-    return pd.DataFrame(ranking)
+    df = pd.DataFrame(ranking, index=kryteria_hoteli.index)
+    df.sort_values([df.columns[0]], ascending=True)
+    return df
 
 "Implementacja funkcji Fuzzy Topsis"
 
 def ranking_fuzzy_topsis(
-    kryteria_hoteli:np.ndarray,
+    kryteria_hoteli: pd.DataFrame,
     wagi: np.ndarray,
-    zysk_czy_koszt:np.ndarray
+    zysk_czy_koszt: np.ndarray
 ) -> pd.DataFrame:
     """Funkcja tworząca ranking metodą TOPSIS
 
@@ -94,6 +96,8 @@ def ranking_fuzzy_topsis(
             dystans_star += np.sum(np.power(kryteria_hoteli[i,j]-a_star[j],2))/3
         c.append(np.sqrt(dystans_minus)/(np.sqrt(dystans_star)+np.sqrt(dystans_minus)))
 
-    return pd.DataFrame(c)
+    df = pd.DataFrame(c, index=kryteria_hoteli.index)
+    df.sort_values([df.columns[0]], ascending=True)
+    return df
 
 
