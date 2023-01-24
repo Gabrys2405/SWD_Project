@@ -78,7 +78,7 @@ def ranking_rsm(
     ranking = ranking[:,1:]
     # print(ranking)
     ranking = pd.DataFrame(ranking, index = kryteria_hoteli.index)
-    ranking.sort_values(by=[0], inplace=True, ascending=False)
+    ranking.sort_values(by=[0], inplace=True, ascending=True)
     # print(ranking)
     return ranking
 
