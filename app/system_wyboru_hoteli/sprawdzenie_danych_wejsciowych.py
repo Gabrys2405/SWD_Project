@@ -81,7 +81,7 @@ def czy_zbiory_wzajemnie_niesprzeczne(zbior_lepszy: np.ndarray, zbior_gorszy: np
 
     comb_sets = zbior_lepszy
     for i in zbior_gorszy:
-        comb_sets.append(i)
+        np.append(zbior_lepszy,i)
     niezdominowane = wstepne_przetwarzanie_kryteriow.wyznacz_punkty_niezdominowane(pd.DataFrame(comb_sets))
     niezdominowane = pd.DataFrame.to_numpy(niezdominowane) 
     if np.array_equal(niezdominowane,zbior_lepszy):
