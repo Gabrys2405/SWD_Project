@@ -18,7 +18,7 @@ class RankingWidget(QtWidgets.QWidget):
 
     _metody_rankingowe: List[Tuple[str, str]] = [
         ("topsis", "TOPSIS"),
-        ("fuzzy_topsis", "Fuzzy TOPSIS"),
+        # ("fuzzy_topsis", "Fuzzy TOPSIS"),
         ("rsm", "RSM"),
         ("safety_principle", "Safety Principle"),
     ]
