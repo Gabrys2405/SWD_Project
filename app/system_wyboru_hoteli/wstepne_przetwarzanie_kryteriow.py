@@ -70,9 +70,9 @@ def filtruj_hotele__czy_parking_darmowy(
 # Indeksy kolumn kryterialnych, które należy zmienić na minimalizację
 kolumny_do_zmiany_na_minimalizacje: List[int] = ["Opinia", "Opinia dla lokalizacji", "Komfort "]
 
-
 def zamien_maksymalizacje_na_minimalizacje(
         kryteria_hoteli: pd.DataFrame,
+        kolumny_do_zmiany_na_minimalizacje: List[int]
     ) -> pd.DataFrame:
     """Zmienia wartości kryteriów, aby wszystkie mogły być minimalizowane.
     
@@ -88,6 +88,8 @@ def zamien_maksymalizacje_na_minimalizacje(
     ----------
     kryteria_hoteli : pd.DataFrame
         DataFrame zawierający wyłącznie kryteria
+    kolumny_do_zmiany_na_minimalizacje : List[int]
+        Indeksy kolumn kryterialnych, które należy zmienić na minimalizację
     
     Returns
     -------

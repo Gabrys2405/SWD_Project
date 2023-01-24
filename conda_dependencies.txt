@@ -1,4 +1,6 @@
-python>=3.9.15
-pytest
+pyside6
 numpy
 pandas
+openpyxl
+matplotlib
+pytest

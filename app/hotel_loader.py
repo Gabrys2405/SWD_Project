@@ -3,7 +3,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from typing import Optional, Iterable
+    from typing import Optional, Iterable, Callable, Dict
     import numpy as np
 
 import pandas as pd
@@ -27,6 +27,26 @@ class HotelLoader():
         return True
 
 
+    def zaladuj_plik(self, sciezka_do_pliku: str, *args, **kwargs) -> HotelLoader:
+        """
+        Wykrywa format pliku i ładuje go, jeśli format jest obsługiwany.
+        
+        Zwraca siebie, aby można było wykonywać polecenia łańcuchowo.
+        """
+
+        formaty_danych: Dict[str, Callable]  = {
+            'xlsx': self.zaladuj_excel,
+            'csv': self.zaladuj_csv
+        }
+
+        rozszerzenie = sciezka_do_pliku.split('.')[-1]
+        try:
+            metoda = formaty_danych[rozszerzenie]
+        except KeyError:
+            raise RuntimeError("Nie można wczytać pliku o podanym rozszerzeniu")
+        return metoda(sciezka_do_pliku, *args, **kwargs)
+
+
     def zaladuj_excel(self, sciezka_do_pliku: str, *args, **kwargs) -> HotelLoader:
         """
         Ładuje plik formatu Excel i przechowuje go do dalszego przetwarzania.
@@ -34,6 +54,7 @@ class HotelLoader():
         
         Zwraca siebie, aby można było wykonywać polecenia łańcuchowo.
         """
+        
         self._dane = pd.read_excel(sciezka_do_pliku, *args, **kwargs)
         return self
     
@@ -45,6 +66,7 @@ class HotelLoader():
         
         Zwraca siebie, aby można było wykonywać polecenia łańcuchowo.
         """
+
         if 'sep' not in kwargs.keys():
             # Ustaw domyślny separator na ';'
             kwargs['sep'] = ';'
@@ -58,6 +80,7 @@ class HotelLoader():
         Zwraca załadowane dane jako DataFrame.
         Zgłasza wyjątek, jeśli nie można odczytać danych.
         """
+
         self._sprawdz_dane()
         return self._dane
     
@@ -68,6 +91,7 @@ class HotelLoader():
         'kolumny' można zapisać jako numery indeksów lub ich nazwy.
         Zgłasza wyjątek, jeśli nie można odczytać danych.
         """
+
         self._sprawdz_dane()
         kols = []
         for k in kolumny:

@@ -22,9 +22,13 @@ def czy_granice_kryteriow_sa_poprawne(
     bool
         True, jeśli wartości granic kryteriów są poprawne, False w przeciwnym wypadku
     """
-    
-    # TODO
-    raise NotImplementedError()
+    check = True
+
+    for i in range(wartosci_maksymalne.shape[0]):
+        if wartosci_maksymalne[i] < wartosci_minimalne[i]:
+            check = False
+
+    return check
 
 
 def czy_punkty_w_zbiorze_wzajemnie_niesprzeczne(
