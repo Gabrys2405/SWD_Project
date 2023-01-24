@@ -3,5 +3,8 @@
         "test_app"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "python.analysis.extraPaths": [
+        "./app/system_wyboru_hoteli"
+    ]
 }
