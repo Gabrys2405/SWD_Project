@@ -122,6 +122,20 @@ def wyznacz_punkty_niezdominowane(
     pd.DataFrame
         DataFrame zawierający niezdominowane kryteria hoteli
     """
+
+    # Ktoś zostawił coś takiego
+    
+    # undominated_points = pd.DataFrame()
+    # for index, row in kryteria_hoteli.iterrows():
+    #     dominated = False
+    #     for index2, row2 in kryteria_hoteli.iterrows():
+    #         if all(row2[column] <= row[column] for column in kryteria_hoteli.columns) and any(row2[column] < row[column] for column in kryteria_hoteli.columns):
+    #             dominated = True
+    #             break
+    #     if not dominated:
+    #         undominated_points = undominated_points.append(row)
+    # return undominated_points
+
     niezdominowane = []
     indeksy = []
     for i, point in kryteria_hoteli.iterrows():
