@@ -21,7 +21,7 @@ def test_topsis():
             (0, -1)
         ], 
         index=indeksy,
-        columns=[0, 1]
+        columns=["a", "b"]
     )
 
     ranking = ranking_topsis(

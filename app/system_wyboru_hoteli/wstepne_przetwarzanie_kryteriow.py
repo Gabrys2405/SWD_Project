@@ -125,36 +125,36 @@ def wyznacz_punkty_niezdominowane(
 
     # Ktoś zostawił coś takiego
     
-    # undominated_points = pd.DataFrame()
-    # for index, row in kryteria_hoteli.iterrows():
-    #     dominated = False
-    #     for index2, row2 in kryteria_hoteli.iterrows():
-    #         if all(row2[column] <= row[column] for column in kryteria_hoteli.columns) and any(row2[column] < row[column] for column in kryteria_hoteli.columns):
-    #             dominated = True
-    #             break
-    #     if not dominated:
-    #         undominated_points = undominated_points.append(row)
-    # return undominated_points
-
-    niezdominowane = []
-    indeksy = []
-    for i, point in kryteria_hoteli.iterrows():
-        is_dominated = False
-        for j, other_point in kryteria_hoteli.iterrows():
-            if i == j:
-                continue
-            is_dominated_by_other = True
-            for column in kryteria_hoteli.columns:
-                if point[column] > other_point[column]:
-                    is_dominated_by_other = False
-                    break
-            if is_dominated_by_other:
-                is_dominated = True
+    undominated_points = pd.DataFrame()
+    for index, row in kryteria_hoteli.iterrows():
+        dominated = False
+        for index2, row2 in kryteria_hoteli.iterrows():
+            if all(row2[column] <= row[column] for column in kryteria_hoteli.columns) and any(row2[column] < row[column] for column in kryteria_hoteli.columns):
+                dominated = True
                 break
-        if not is_dominated:
-            niezdominowane.append(point)
-            indeksy.append(kryteria_hoteli.index[i])
-    return pd.DataFrame(niezdominowane, index = indeksy)
+        if not dominated:
+            undominated_points = undominated_points.append(row)
+    return undominated_points
+
+    # niezdominowane = []
+    # indeksy = []
+    # for i, point in kryteria_hoteli.iterrows():
+    #     is_dominated = False
+    #     for j, other_point in kryteria_hoteli.iterrows():
+    #         if i == j:
+    #             continue
+    #         is_dominated_by_other = True
+    #         for column in kryteria_hoteli.columns:
+    #             if point[column] > other_point[column]:
+    #                 is_dominated_by_other = False
+    #                 break
+    #         if is_dominated_by_other:
+    #             is_dominated = True
+    #             break
+    #     if not is_dominated:
+    #         niezdominowane.append(point)
+    #         indeksy.append(kryteria_hoteli.index[i])
+    # return pd.DataFrame(niezdominowane, index = indeksy)
 
 
 def normalizuj_kryteria(

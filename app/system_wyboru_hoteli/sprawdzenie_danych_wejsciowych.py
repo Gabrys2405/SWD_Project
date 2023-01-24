@@ -76,15 +76,15 @@ def czy_zbiory_wzajemnie_niesprzeczne(zbior_lepszy: np.ndarray, zbior_gorszy: np
 
     # TODO To tak nie działa!
 
-    # comb_sets = np.vstack([zbior_lepszy, zbior_gorszy])
-    # # for i in zbior_gorszy:
-    # #     comb_sets.append(i)
-    # niezdominowane = wstepne_przetwarzanie_kryteriow.wyznacz_punkty_niezdominowane(pd.DataFrame(comb_sets))
-    # niezdominowane = pd.DataFrame.to_numpy(niezdominowane) 
-    # if np.array_equal(niezdominowane,zbior_lepszy):
-    #     return True
-    # else:
-    #     return False
+    comb_sets = np.vstack([zbior_lepszy, zbior_gorszy])
+    # for i in zbior_gorszy:
+    #     comb_sets.append(i)
+    niezdominowane = wstepne_przetwarzanie_kryteriow.wyznacz_punkty_niezdominowane(pd.DataFrame(comb_sets))
+    niezdominowane = pd.DataFrame.to_numpy(niezdominowane) 
+    if np.array_equal(niezdominowane,zbior_lepszy):
+        return True
+    else:
+        return False
     
     return True
 

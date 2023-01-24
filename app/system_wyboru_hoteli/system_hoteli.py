@@ -148,7 +148,7 @@ class SystemWyboruHoteli():
         self._wykonaj_przetwarzanie_kryteriow()
 
         dane = self._dane_przetwarzane
-        szerokosc = dane.kryteria_hoteli.values.shape[0]
+        szerokosc = dane.kryteria_hoteli.values.shape[1]
         if nazwa_metody == "topsis":
             ranking = funkcje_rankingowe.ranking_topsis(
                 dane.kryteria_hoteli,

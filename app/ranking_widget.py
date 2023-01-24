@@ -105,10 +105,10 @@ class RankingWidget(QtWidgets.QWidget):
         try:
             # Wyłap ploty utworzone podczas generowania rankingu
             imgs, ranking = execute_and_get_buffers(lambda: self.system.wygeneruj_ranking(id_metody))
-        except wyjatki.BladDanychUzytkownika as e:
+        except Exception as e:
             # Wyłap błędy przetwarzania od użytkownika
             self.wyswietl_blad("Błąd poprawności danych", e)
-            return
+            raise e
         
         self._obecny_ranking = ranking
         self._obecna_metoda = indeks_metody
@@ -134,10 +134,10 @@ class RankingWidget(QtWidgets.QWidget):
             )[0]
         if filename:
             try:
-                zapisz_ranking(filename, self._obecny_ranking, self._obecna_metoda)
+                zapisz_ranking(filename, self._obecny_ranking, self._metody_rankingowe[self._obecna_metoda][1])
             except Exception as e:
                 self.wyswietl_blad("Błąd zapisu rankingu", e)
-                return
+                raise e
 
 
     def _odswiez_ploty(self, img_bufs: List[io.BytesIO]):
