@@ -1,5 +1,6 @@
 import numpy as np
-
+import wstepne_przetwarzanie_kryteriow
+import pandas as pd 
 
 def czy_granice_kryteriow_sa_poprawne(
         wartosci_minimalne: np.ndarray, 
@@ -49,10 +50,14 @@ def czy_punkty_w_zbiorze_wzajemnie_niesprzeczne(
     bool
         True, jeśli zbiór jest wzajemnie niesprzeczny, False w przeciwnym wypadku
     """
+    niezdominowane = wstepne_przetwarzanie_kryteriow.wyznacz_punkty_niezdominowane(pd.DataFrame(zbior))
 
-    # TODO
-    # Zachęcam do skorzystania z funkcji wyznaczającej punkty niezdominowane
-    raise NotImplementedError()
+    if (len(niezdominowane) == len(zbior)):
+        return True
+    else:
+        return False
+
+    
 
 
 def czy_zbiory_wzajemnie_niesprzeczne(zbior_lepszy: np.ndarray, zbior_gorszy: np.ndarray) -> bool:
@@ -74,5 +79,14 @@ def czy_zbiory_wzajemnie_niesprzeczne(zbior_lepszy: np.ndarray, zbior_gorszy: np
         True, jeśli zbiory są wzajemnie niesprzeczne, False w przeciwnym wypadku
     """
 
-    # TODO
-    raise NotImplementedError()
+    comb_sets = zbior_lepszy
+    for i in zbior_gorszy:
+        comb_sets.append(i)
+    niezdominowane = wstepne_przetwarzanie_kryteriow.wyznacz_punkty_niezdominowane(pd.DataFrame(comb_sets))
+    niezdominowane = pd.DataFrame.to_numpy(niezdominowane) 
+    if np.array_equal(niezdominowane,zbior_lepszy):
+        return True
+    else:
+        return False
+
+
