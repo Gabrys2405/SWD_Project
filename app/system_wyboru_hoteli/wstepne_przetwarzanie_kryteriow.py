@@ -29,15 +29,12 @@ def filtruj_hotele__wartosci_kryteriow_minimalne_i_maksymalne(
     pd.DataFrame
         DataFrame zawierający kryteria hoteli mieszczące się w wartościach granicznych
     """
-
-    # TODO
-    # Podpowiedzi:
-    #  - kryteria_hoteli.values jest macierzą NumPy, zmiany w niej wpływają na DataFrame
-    #  - kryteria_hoteli.drop(indeks) usuwa wiersz
-    #  - kryteria_hoteli.index[i] zwraca indeks do użycia w metodzie drop()
-    # Istotne jest, aby zachować pierwotne indeksowanie z kryteria_hoteli
-    raise NotImplementedError()
-
+    columns = kryteria_hoteli.columns
+    for i, column in enumerate(columns):
+        kryteria_hoteli = kryteria_hoteli[
+            (kryteria_hoteli[column] < wartosci_maksymalne[i]) & 
+            (kryteria_hoteli[column] > wartosci_minimalne[i])]
+    return kryteria_hoteli
 
 def filtruj_hotele__czy_parking_darmowy(
         wszystkie_dane_hoteli: pd.DataFrame,
@@ -67,17 +64,11 @@ def filtruj_hotele__czy_parking_darmowy(
     pd.DataFrame
         DataFrame zawierający kryteria hoteli spełniające warunki parkingu
     """
-
-    # TODO
-    # Podpowiedzi:
-    #  - kryteria_hoteli.drop(indeks) usuwa wiersz
-    #  - kryteria_hoteli.index[i] zwraca indeks do użycia w metodzie drop()
-    # Istotne jest, aby zachować pierwotne indeksowanie z kryteria_hoteli
-    raise NotImplementedError()
+    return kryteria_hoteli[wszystkie_dane_hoteli["Bezpłatny parking "] == czy_parking_musi_byc_darmowy]
 
 
 # Indeksy kolumn kryterialnych, które należy zmienić na minimalizację
-kolumny_do_zmiany_na_minimalizacje: List[int] = [0, 1, 4]
+kolumny_do_zmiany_na_minimalizacje: List[int] = ["Opinia", "Opinia dla lokalizacji", "Komfort "]
 
 
 def zamien_maksymalizacje_na_minimalizacje(
@@ -103,11 +94,9 @@ def zamien_maksymalizacje_na_minimalizacje(
     pd.DataFrame
         DataFrame zawierający kryteria hoteli poprawione na minimalizację
     """
-
-    # TODO
-    # Podpowiedzi:
-    #  - kryteria_hoteli.values jest macierzą NumPy, zmiany w niej wpływają na DataFrame
-    raise NotImplementedError()
+    for column in kolumny_do_zmiany_na_minimalizacje:
+        kryteria_hoteli[column] = [10 - i for i in kryteria_hoteli[column]]
+    return kryteria_hoteli
 
 
 def wyznacz_punkty_niezdominowane(
@@ -128,11 +117,20 @@ def wyznacz_punkty_niezdominowane(
     pd.DataFrame
         DataFrame zawierający niezdominowane kryteria hoteli
     """
-
-    # TODO
-    # Podpowiedzi:
-    #  - kryteria_hoteli.values jest macierzą NumPy, zmiany w niej wpływają na DataFrame
-    #  - kryteria_hoteli.drop(indeks) usuwa wiersz
-    #  - kryteria_hoteli.index[i] zwraca indeks do użycia w metodzie drop()
-    # Istotne jest, aby zachować pierwotne indeksowanie z kryteria_hoteli
-    raise NotImplementedError()
+    niezdominowane = []
+    for i, point in kryteria_hoteli.iterrows():
+        is_dominated = False
+        for j, other_point in kryteria_hoteli.iterrows():
+            if i == j:
+                continue
+            is_dominated_by_other = True
+            for column in kryteria_hoteli.columns:
+                if point[column] > other_point[column]:
+                    is_dominated_by_other = False
+                    break
+            if is_dominated_by_other:
+                is_dominated = True
+                break
+        if not is_dominated:
+            niezdominowane.append(point)
+    return pd.DataFrame(niezdominowane, index = kryteria_hoteli.index)
