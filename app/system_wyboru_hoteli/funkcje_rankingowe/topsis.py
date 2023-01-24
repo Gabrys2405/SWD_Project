@@ -28,15 +28,14 @@ def ranking_topsis(
     #  - kryteria_hoteli.drop(indeks) usuwa wiersz
     #  - kryteria_hoteli.index[i] zwraca indeks do użycia w metodzie drop()
     # Istotne jest, aby zachować pierwotne indeksowanie z kryteria_hoteli
-
-    znormalizowane_kryteria = kryteria_hoteli / np.linalg.norm(kryteria_hoteli, axis = 0)
+    znormalizowane_kryteria = kryteria_hoteli / np.linalg.norm(kryteria_hoteli.astype(float), axis = 0)
     kryteria_z_wagami = znormalizowane_kryteria * wagi
     rozw_idealne = np.max(kryteria_z_wagami,axis=0)
     rozw_antyidealne = np.min(kryteria_z_wagami,axis=0)
-    odl_od_idealnego = np.sqrt(np.sum((kryteria_z_wagami - rozw_idealne)**2,axis = 1))
-    odl_od_antyidealnego = np.sqrt(np.sum((kryteria_z_wagami - rozw_antyidealne) ** 2, axis=1))
-    ranking = odl_od_idealnego / (odl_od_antyidealnego + odl_od_idealnego)
-    return pd.DataFrame(data=ranking)
+    odl_od_idealnego = np.sqrt(np.sum((kryteria_z_wagami - rozw_idealne)**2,axis = 1).astype(float))
+    odl_od_antyidealnego = np.sqrt(np.sum((kryteria_z_wagami - rozw_antyidealne) ** 2, axis=1).astype(float))
+    ranking = odl_od_antyidealnego / (odl_od_antyidealnego + odl_od_idealnego)
+    return pd.DataFrame(ranking)
 
 "Implementacja funkcji Fuzzy Topsis"
 
