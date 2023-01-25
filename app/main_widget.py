@@ -30,6 +30,6 @@ class MainWidget(QtWidgets.QWidget):
         )
         self.tabWidget.addTab(
             PorownanieWidget(),
-            "Rankingi"
+            "Porównanie rankingów"
         )
 
