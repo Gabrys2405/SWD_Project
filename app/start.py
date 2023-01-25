@@ -1,5 +1,4 @@
 from PySide6 import QtCore, QtWidgets
-from hotel_loader import HotelLoader
 from system_wyboru_hoteli import SystemWyboruHoteli
 from main_widget import MainWidget
 

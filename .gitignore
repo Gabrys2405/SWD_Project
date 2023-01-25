@@ -1,5 +1,10 @@
 # Pliki cache Pythona
 __pycache__
+.pytest_cache
 
 # Plik testowy ipynb
 /test.ipynb
+
+# Foldery pyinstaller
+build
+dist
