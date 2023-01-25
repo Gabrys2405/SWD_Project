@@ -31,9 +31,9 @@ class PorownanieWidget(QtWidgets.QWidget):
         self.setLayout(self._main_layout)
 
         self._layout_row_1 = QtWidgets.QVBoxLayout(self)
-        self._main_layout.addLayout(self._layout_row_1, 3)
+        self._main_layout.addLayout(self._layout_row_1, 2)
         self._layout_row_2 = QtWidgets.QVBoxLayout(self)
-        self._main_layout.addLayout(self._layout_row_2, 7)
+        self._main_layout.addLayout(self._layout_row_2, 8)
 
 
         element = QtWidgets.QLabel("Metody rankingowe do porównania", alignment=QtCore.Qt.AlignCenter)
@@ -178,8 +178,8 @@ class PorownanieWidget(QtWidgets.QWidget):
                 element = QtWidgets.QLabel("", alignment=QtCore.Qt.AlignCenter)
                 element.setPixmap(QtGui.QPixmap(q_img))
                 self._layout_wykresow.addWidget(element)
-                height += element.height()
-                width = max(width, element.width())
+                height += q_img.width()
+                width = max(width, q_img.width())
             self._widget_wykresow.setFixedSize(width, height)
 
 

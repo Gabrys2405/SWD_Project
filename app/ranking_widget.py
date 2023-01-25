@@ -173,8 +173,8 @@ class RankingWidget(QtWidgets.QWidget):
                 element = QtWidgets.QLabel("", alignment=QtCore.Qt.AlignCenter)
                 element.setPixmap(QtGui.QPixmap(q_img))
                 self._layout_wykresow.addWidget(element)
-                height += element.height()
-                width = max(width, element.width())
+                height += q_img.width()
+                width = max(width, q_img.width())
             self._widget_wykresow.setFixedSize(width, height)
 
 

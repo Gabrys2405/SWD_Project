@@ -44,11 +44,11 @@ import networkx as nx
 # rankings = [ranking1, ranking2, ranking3]
 
 def compare(rank1: pd.DataFrame, rank2: pd.DataFrame):
-    i1 = list(rank1.index)
-    i2 = list(rank2.index)
+    # i1 = rank1.index
+    # i2 = list(rank2.index)
     d = 0
-    for i in i1:
-        d += abs(i1.index(i) - i2.index(i))
+    for i in range(rank1.shape[0]):
+        d += abs(rank1.values[i] - rank2.values[i])
     return d
 
 def drawDistances(methods: List[str], ranks: List[pd.DataFrame]):
@@ -66,7 +66,9 @@ def drawDistances(methods: List[str], ranks: List[pd.DataFrame]):
             G.add_edge(methods[i], methods[j], weight=D[i][j])
 
     elarge = [(u, v) for (u, v, d) in G.edges(data=True) if d["weight"] > 0]
-    pos = nx.spring_layout(G, seed=7)
+    plt.figure(figsize=(10, 10))
+    pos = nx.planar_layout(G)
+    # pos = nx.spring_layout(G)
     nx.draw_networkx_nodes(G, pos, node_size=500)
     nx.draw_networkx_edges(G, pos, edgelist=elarge)
 
