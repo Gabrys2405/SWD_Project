@@ -6,6 +6,7 @@ from PySide6 import QtWidgets
 from system_wyboru_hoteli import SystemWyboruHoteli
 from params_widget import ParamsWidget
 from ranking_widget import RankingWidget
+from porownanie_widget import PorownanieWidget
 
 
 class MainWidget(QtWidgets.QWidget):
@@ -25,6 +26,10 @@ class MainWidget(QtWidgets.QWidget):
         )
         self.tabWidget.addTab(
             RankingWidget(system),
+            "Rankingi"
+        )
+        self.tabWidget.addTab(
+            PorownanieWidget(),
             "Rankingi"
         )
 

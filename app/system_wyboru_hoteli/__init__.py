@@ -7,4 +7,5 @@ if p not in sys.path:
 
 from system_hoteli import SystemWyboruHoteli
 import funkcje_rankingowe
-from zapis_rankingu import zapisz_ranking
+from zapis_odczyt_rankingu import zapisz_ranking, wczytaj_ranking
+from porownanie_rankingow import drawDistances as porownanie_rankingow

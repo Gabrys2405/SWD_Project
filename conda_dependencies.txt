@@ -1,6 +1,7 @@
 pyside6
 numpy
 pandas
+networkx
 openpyxl
 matplotlib
 pytest

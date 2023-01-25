@@ -74,6 +74,13 @@ class RankingWidget(QtWidgets.QWidget):
         element.setFont(font)
         self._layout_column_1.addWidget(element)
 
+        self.l_zgodne_wiersze = QtWidgets.QLabel("", alignment=QtCore.Qt.AlignHCenter)
+        element = self.l_zgodne_wiersze
+        font = get_default_font()
+        font.setItalic(True)
+        element.setFont(font)
+        self._layout_column_1.addWidget(element)
+
         table_widget = EdiTableWidget()
         self.t_ranking = table_widget
         self._layout_column_1.addWidget(table_widget)
@@ -90,6 +97,7 @@ class RankingWidget(QtWidgets.QWidget):
         self._layout_wykresow = QtWidgets.QVBoxLayout()
 
         scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setAlignment(QtCore.Qt.AlignHCenter)
         self._widget_wykresow = QtWidgets.QWidget()
         self._widget_wykresow.setLayout(self._layout_wykresow)
         scroll_area.setWidget(self._widget_wykresow)
@@ -124,6 +132,7 @@ class RankingWidget(QtWidgets.QWidget):
         self._odswiez_ploty(imgs)
 
         self.l_ranking.setText(f"Ranking dla metody {nazwa_metody}")
+        self.l_zgodne_wiersze.setText(f"Ilość hoteli: {ranking.shape[0]}")
 
 
     def zapisz_ranking(self, filename: Optional[str] = None):
