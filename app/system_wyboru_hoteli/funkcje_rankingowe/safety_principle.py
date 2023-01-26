@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from typing import List, Tuple
+import matplotlib.pyplot as plt
+
 
 def odleglosc_od_odcinka(x, p1, p2) -> Tuple[float, float]:
     # Zwraca odległość punktu od odcinka oraz w jakiej części odcinka się znajduje
@@ -166,6 +168,15 @@ def ranking_safety_principle(
     
     rank = pd.DataFrame(ranking, index = kryteria_hoteli.index)
     rank.sort_values([rank.columns[0]], inplace=True)
+    
+    x = kryteria_hoteli.index
+    y = ranking
+    
+    plt.plot(x, y, 'o')
+    plt.xlabel('Numer hotelu')
+    plt.ylabel('Wartość funkcji skoringowanej')
+    plt.title('Wyniki selekcji')
+    plt.show()
     
     return rank
             
