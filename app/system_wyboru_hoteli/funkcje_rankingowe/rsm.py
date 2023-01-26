@@ -83,6 +83,7 @@ def ranking_rsm(
     ranking.sort_values(by=[0], inplace=True, ascending=True)
     # print(ranking)
 
+    plt.figure()
     plt.plot(ranking.index.values, ranking[0], 'go')
     plt.xlabel('Indeks hotelu')
     plt.ylabel('Wartość funkcji rankingowej')
