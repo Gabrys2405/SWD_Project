@@ -66,7 +66,7 @@ def filtruj_hotele__czy_parking_darmowy(
     """
     if not czy_parking_musi_byc_darmowy:
         return kryteria_hoteli
-    return kryteria_hoteli[wszystkie_dane_hoteli["Bezpłatny parking "] == czy_parking_musi_byc_darmowy]
+    return kryteria_hoteli[wszystkie_dane_hoteli["Bezpłatny parking"] == czy_parking_musi_byc_darmowy]
 
 
 # Indeksy kolumn kryterialnych, które należy zmienić na minimalizację
