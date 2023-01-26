@@ -2,6 +2,13 @@ from PySide6 import QtCore, QtWidgets
 from system_wyboru_hoteli import SystemWyboruHoteli
 from main_widget import MainWidget
 
+import os
+if "QT_PLUGIN_PATH" not in os.environ:
+    import sys
+    # Naprawienie błędu z niewłaściwym folderem pluginów Qt
+    os.environ["QT_PLUGIN_PATH"] = sys.prefix + "\\Library\\lib\\qt6\\plugins"
+
+
 def start():
     """Uruchomienie GUI aplikacji"""
 
