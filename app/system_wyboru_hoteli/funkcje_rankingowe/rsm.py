@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+
 
 
 def square_search(pu, pA0, pA1):
@@ -80,37 +82,44 @@ def ranking_rsm(
     ranking = pd.DataFrame(ranking, index = kryteria_hoteli.index)
     ranking.sort_values(by=[0], inplace=True, ascending=True)
     # print(ranking)
+
+    plt.plot(ranking.index.values, ranking[0], 'go')
+    plt.xlabel('Indeks hotelu')
+    plt.ylabel('Wartość funkcji rankingowej')
+    plt.title('Wartość funkcji rankingowej dla metody RSM')
+
+    plt.show()
     return ranking
 
-
+#
 # indeksy = [3, 6, 12]
-
+#
 # kryteria_hoteli = pd.DataFrame([
 #             (-2, 0),
 #             (1, -3),
 #             (0, -1)
-#         ], 
+#         ],
 #         index=indeksy,
 #         columns=[0, 1]
 #     )
-
+#
 # punkty_docelowe = np.array([
 #         [-1, 3],
 #         [0, 1],
 #         [2, 0],
 #     ])
-
+#
 # punkty_status_quo = np.array([
 #         [-2,0],
 #         [-1,-2],
 #         [0,-3],
 #     ])
-
+#
 # ranking = ranking_rsm(
 #         kryteria_hoteli,
 #         punkty_docelowe,
 #         punkty_status_quo
 #     )
-
-
+#
+#
 # print(ranking)
