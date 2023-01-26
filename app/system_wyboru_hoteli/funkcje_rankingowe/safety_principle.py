@@ -172,6 +172,7 @@ def ranking_safety_principle(
     x = kryteria_hoteli.index
     y = ranking
     
+    plt.figure()
     plt.plot(x, y, 'o')
     plt.xlabel('Numer hotelu')
     plt.ylabel('Wartość funkcji skoringowanej')
