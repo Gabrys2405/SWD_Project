@@ -1,9 +1,9 @@
+from typing import List, Tuple
 import numpy as np
 import pandas as pd 
 
 
-def get_Min_Max(data):
-    x, y = data.shape
+def get_Min_Max(data: np.ndarray) -> Tuple[float, float]:
     min = np.min(data,axis=0)
     max = np.max(data,axis=0)
 
@@ -70,12 +70,15 @@ def rank(c_utility, comp_elem, point):
     return score
 
 
+def ranking_uta(data: pd.DataFrame, wybrane_kolumny: np.ndarray) -> pd.DataFrame:
+    # wybrane_kolumny - lista True/False pięciu kolumn, które zostały wybrane do rankingu
+    # True oznacza, że kolumna została wybrana, False - że nie
+    # Ilość wystąpień True jest równa szerokości (ilości kolumn) tabeli data
 
-def uta(data):
     data_matrix = data.to_numpy()
     min_val, max_val = get_Min_Max(data_matrix)
-    max_min = [1 for i in len(data_matrix[0])]
-    utility = [[0.2,0.16,0.12,0.08,0] for i in range(len(data_matrix[0]))]
+    max_min = [1] * len(data_matrix[0])
+    utility = [[0.2,0.16,0.12,0.08,0] for _ in range(len(data_matrix[0]))]
     comp = split(min_val,max_val,max_min,max_min,utility)
     df_utility = pd.DataFrame(data=comp)
     df_utility = df_utility.T
@@ -88,6 +91,7 @@ def uta(data):
     score = []
     for i in data_matrix:
         score.append(rank(u,comp,i))
-    df_score = pd.DataFrame(data=score)
+    df_score = pd.DataFrame(data=score, index=data.index)
+    df_score.sort_values(by=[0], inplace=True, ascending=True)
     return df_score
 

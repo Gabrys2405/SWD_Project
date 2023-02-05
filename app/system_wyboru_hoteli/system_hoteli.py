@@ -1,6 +1,15 @@
 # Autor główny: Piotr Sikorski
 from __future__ import annotations 
-from typing import Dict, Optional, List, Literal
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import Dict, Optional, List, Literal
+    _METODY_RANKINGOWE = Literal[
+        "topsis",
+        "fuzzy_topsis",
+        "rsm",
+        "safety_principle",
+        "uta",
+    ]
 import numpy as np
 import pandas as pd
 import wyjatki
@@ -8,6 +17,9 @@ import sprawdzenie_danych_wejsciowych
 import wstepne_przetwarzanie_kryteriow
 import funkcje_rankingowe
 from zbior_danych import ZbiorDanych
+
+
+
 
 
 class SystemWyboruHoteli():
@@ -137,7 +149,7 @@ class SystemWyboruHoteli():
         print(self._dane_przetwarzane)
     
 
-    def wygeneruj_ranking(self, nazwa_metody: Literal["topsis", "rsm"]) -> pd.DataFrame:
+    def wygeneruj_ranking(self, nazwa_metody: _METODY_RANKINGOWE) -> pd.DataFrame:
         """Metoda zwracająca dane jednego, wybranego rankingu.
         
         Metoda sprawdza i przetwarza zapisane wcześniej dane, i zwraca
@@ -171,6 +183,11 @@ class SystemWyboruHoteli():
                 dane.kryteria_hoteli, 
                 dane.punkty_docelowe.values,
                 dane.punkty_status_quo.values
+            )
+        elif nazwa_metody == "uta":
+            ranking = funkcje_rankingowe.ranking_uta(
+                dane.kryteria_hoteli,
+                dane.wybrane_kryteria
             )
         else:
             raise KeyError(f"Nie znaleziono metody rankingowej o nazwie '{nazwa_metody}'")

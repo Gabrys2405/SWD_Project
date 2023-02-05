@@ -3,3 +3,4 @@ from funkcje_rankingowe.topsis import ranking_topsis
 from funkcje_rankingowe.topsis import ranking_fuzzy_topsis
 from funkcje_rankingowe.rsm import ranking_rsm
 from funkcje_rankingowe.safety_principle import ranking_safety_principle
+from funkcje_rankingowe.uta import ranking_uta

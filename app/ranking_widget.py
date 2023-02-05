@@ -21,6 +21,7 @@ class RankingWidget(QtWidgets.QWidget):
         # ("fuzzy_topsis", "Fuzzy TOPSIS"),
         ("rsm", "RSM"),
         ("safety_principle", "Safety Principle"),
+        ("uta", "UTA"),
     ]
 
     def __init__(self, system: SystemWyboruHoteli):
